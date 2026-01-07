@@ -15,22 +15,25 @@
             .preview-area { width: 65%; }
         }
 
+        /* FORM STYLE */
         .form-area { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         label { font-weight: bold; display: block; margin-top: 15px; font-size: 0.9rem; }
         input, textarea, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
         
-        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-blue { background-color: #3498db; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; flex: 1; font-weight: bold; }
+        .btn-blue { background-color: #3498db; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; flex: 1; font-weight: bold; margin-top: 10px; }
         .btn-green { background-color: #27ae60; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; cursor: pointer; font-size: 1.1rem; font-weight: bold; margin-top: 25px; }
 
-        /* PREVIEW PDF (UNIVERSAL) */
+        /* PREVIEW AREA */
         .preview-area { background: #555; padding: 20px; overflow-x: auto; display: flex; justify-content: center; }
+        
+        /* PDF CONTENT (FORCED A4) */
         #pdf-content { 
             background: white; width: 210mm; min-height: 297mm; padding: 10mm 15mm; 
-            box-sizing: border-box; margin: 0 auto; flex-shrink: 0; color: black;
+            box-sizing: border-box; margin: 0; flex-shrink: 0; color: black;
+            position: relative; /* Fix for top alignment */
         }
 
-        .logo-box { text-align: center; margin: 0; padding: 0; }
+        .logo-box { text-align: center; margin: 0; line-height: 0; }
         .logo-box img { max-width: 100px; height: auto; }
         h2 { text-align: center; text-decoration: underline; font-size: 18px; margin: 5px 0 15px 0; text-transform: uppercase; }
         
@@ -38,10 +41,11 @@
         th, td { border: 1px solid black; padding: 8px; font-size: 13px; word-wrap: break-word; vertical-align: top; }
         th { background-color: #f2f2f2; width: 35%; text-align: left; }
 
+        /* PHOTO PAGE */
         .photo-page { page-break-before: always; text-align: center; padding-top: 10mm; }
         .photo-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 15px; }
         .img-wrapper { width: 45%; border: 1px solid #000; padding: 5px; background: #fff; box-sizing: border-box; }
-        .img-wrapper img { width: 100%; height: 200px; object-fit: contain; display: block; }
+        .img-wrapper img { width: 100%; height: 180px; object-fit: contain; display: block; }
     </style>
 </head>
 <body>
@@ -70,10 +74,7 @@
 
         <label>Senarai Staf Hadir (Pilih Berbilang)</label>
         <select id="staf" multiple size="8" style="height: 180px;"></select>
-        <div class="btn-group">
-            <button type="button" class="btn-blue" onclick="selectAllStaf()">Pilih Semua</button>
-            <button type="button" class="btn-blue" style="background-color:#95a5a6" onclick="clearStaf()">Reset</button>
-        </div>
+        <button type="button" class="btn-blue" onclick="selectAllStaf()">Pilih Semua</button>
 
         <label>Tema Sivik</label>
         <select id="tema">
@@ -88,25 +89,25 @@
         <input type="text" id="pengacara" placeholder="Nama Murid / Guru">
         
         <label>Ucapan Guru Besar</label>
-        <textarea id="gb" placeholder="Ringkasan ucapan..."></textarea>
+        <textarea id="gb"></textarea>
         <label>Ucapan GPK Pentadbiran</label>
-        <textarea id="gpk_admin" placeholder="Ringkasan ucapan..."></textarea>
+        <textarea id="gpk_admin"></textarea>
         <label>Ucapan GPK HEM</label>
-        <textarea id="gpk_hem" placeholder="Ringkasan ucapan..."></textarea>
+        <textarea id="gpk_hem"></textarea>
         <label>Ucapan GPK Kokurikulum</label>
-        <textarea id="gpk_koku" placeholder="Ringkasan ucapan..."></textarea>
+        <textarea id="gpk_koku"></textarea>
         <label>Ucapan Staf Lain</label>
-        <textarea id="staf_lain" placeholder="Ringkasan ucapan..."></textarea>
+        <textarea id="staf_lain"></textarea>
         
         <label>Disediakan Oleh</label>
         <select id="disediakan">
             <option value="" disabled selected>Pilih Nama</option>
         </select>
         
-        <label>Muat Naik Gambar</label>
+        <label>Muat Naik Gambar (Tunggu sehingga muncul di preview)</label>
         <input type="file" id="inputPhotos" accept="image/*" multiple>
 
-        <button id="btnJana" class="btn-green" onclick="generatePDF()">MUAT TURUN PDF</button>
+        <button id="btnJana" class="btn-green" onclick="generatePDF()">MUAT TURUN PDF (VERSI STABIL)</button>
     </div>
 
     <div class="preview-area">
@@ -128,7 +129,7 @@
                 <tr><th>Disediakan Oleh</th><td id="pvDisediakan"></td></tr>
                 <tr><th>Disahkan Oleh</th><td><strong>Ling Lee Ann</strong><br>Guru Besar SJK(C) Chung San</td></tr>
             </table>
-            <div id="photo-area" class="photo-page">
+            <div class="photo-page">
                 <h3 style="text-decoration: underline; font-size: 16px;">LAMPIRAN GAMBAR</h3>
                 <div id="pvPhotos" class="photo-grid"></div>
             </div>
@@ -141,14 +142,12 @@
 
     const selectStaf = document.getElementById('staf');
     const selectDisediakan = document.getElementById('disediakan');
-
     listNama.forEach(s => {
         selectStaf.add(new Option(s, s));
         selectDisediakan.add(new Option(s, s));
     });
 
     function selectAllStaf() { Array.from(selectStaf.options).forEach(o => o.selected = true); updatePreview(); }
-    function clearStaf() { Array.from(selectStaf.options).forEach(o => o.selected = false); updatePreview(); }
 
     function updatePreview() {
         document.getElementById('pvTarikh').innerText = document.getElementById('tarikh').value || '-';
@@ -162,7 +161,6 @@
         document.getElementById('pvGPKKoku').innerText = document.getElementById('gpk_koku').value || '-';
         document.getElementById('pvStafLain').innerText = document.getElementById('staf_lain').value || '-';
         document.getElementById('pvDisediakan').innerText = document.getElementById('disediakan').value || '-';
-        
         const sel = Array.from(selectStaf.selectedOptions).map(o => o.value);
         document.getElementById('pvStaf').innerText = sel.length ? sel.join(", ") : "-";
     }
@@ -171,7 +169,7 @@
 
     document.getElementById('inputPhotos').addEventListener('change', async function(e) {
         const container = document.getElementById('pvPhotos');
-        container.innerHTML = 'Memproses imej...';
+        container.innerHTML = 'Memproses...';
         const files = Array.from(e.target.files);
         let html = '';
         for (let i = 0; i < files.length; i++) {
@@ -187,22 +185,37 @@
 
     async function generatePDF() {
         const btn = document.getElementById('btnJana');
-        btn.innerText = "Sila tunggu...";
+        btn.innerText = "Sila Tunggu (Proses PDF)...";
         btn.disabled = true;
+
         const element = document.getElementById('pdf-content');
         const tarikhVal = document.getElementById('tarikh').value || 'Baru';
-        const isMobile = window.innerWidth < 992;
-        
+
         const opt = {
             margin: 0,
-            filename: `Laporan Perhimpunan Sekolah ${tarikhVal}.pdf`,
+            filename: `Laporan_${tarikhVal}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, width: 794, windowWidth: isMobile ? 794 : window.innerWidth },
+            html2canvas: { 
+                scale: 2, 
+                useCORS: true, 
+                logging: false,
+                letterRendering: true,
+                windowWidth: 1200, // Paksa pelayar telefon render dalam lebar besar
+                scrollY: -window.scrollY // Reset scroll position supaya tidak terpotong
+            },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        try { await html2pdf().set(opt).from(element).save(); } 
-        finally { btn.innerText = "MUAT TURUN PDF"; btn.disabled = false; }
+        try {
+            // Pastikan kita "scroll" ke atas secara programmatik sebelum jana
+            window.scrollTo(0,0);
+            await html2pdf().set(opt).from(element).save();
+        } catch (err) {
+            alert("Ralat menjana PDF: " + err);
+        } finally {
+            btn.innerText = "MUAT TURUN PDF (VERSI STABIL)";
+            btn.disabled = false;
+        }
     }
     window.onload = updatePreview;
 </script>
