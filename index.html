@@ -3,148 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Perhimpunan Sekolah</title>
+    <title>Sistem Laporan Perhimpunan SJKC Chung San</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 10px; background-color: #f4f7f6; }
+        body { font-family: Arial, sans-serif; background-color: #f0f2f5; padding: 10px; }
         .container { display: flex; flex-direction: column; gap: 20px; }
-        
-        /* Layout Desktop */
         @media (min-width: 992px) {
             .container { flex-direction: row; align-items: flex-start; }
             .form-area { width: 40%; position: sticky; top: 10px; max-height: 95vh; overflow-y: auto; }
             .preview-area { width: 60%; }
         }
 
+        /* Borang Input */
         .form-area { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .preview-area { background: white; padding: 10px; border: 1px solid #ddd; }
-
-        label { font-weight: bold; display: block; margin-top: 15px; font-size: 0.9rem; color: #333; }
-        input, textarea, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 1rem; }
-        textarea { resize: vertical; min-height: 50px; }
+        label { font-weight: bold; display: block; margin-top: 15px; font-size: 0.9rem; }
+        input, textarea, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
         
         .btn-group { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-select { background-color: #3498db; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; flex: 1; font-weight: bold; }
-        .btn-pdf { background-color: #27ae60; color: white; border: none; padding: 15px; width: 100%; border-radius: 5px; cursor: pointer; font-size: 1.1rem; font-weight: bold; margin-top: 25px; }
+        .btn-blue { background-color: #3498db; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; flex: 1; font-weight: bold; }
+        .btn-green { background-color: #27ae60; color: white; border: none; padding: 15px; width: 100%; border-radius: 5px; cursor: pointer; font-size: 1.1rem; font-weight: bold; margin-top: 20px; }
 
-        /* Gaya PDF (Standard A4) */
-        #pdf-render { width: 100%; background: white; color: black; padding: 0; }
-        .logo-box { text-align: center; margin-bottom: 10px; }
-        .logo-box img { max-width: 120px; height: auto; }
-        h2 { text-align: center; text-decoration: underline; font-size: 18px; margin: 10px 0; text-transform: uppercase; }
+        /* Gaya Preview & PDF */
+        .preview-area { background: white; border: 1px solid #ddd; }
+        #pdf-content { background: white; padding: 0; margin: 0; width: 100%; }
         
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-top: 10px; }
-        th, td { border: 1px solid black; padding: 8px; font-size: 13px; word-wrap: break-word; vertical-align: top; }
-        th { background-color: #f2f2f2; width: 35%; text-align: left; }
+        /* Hilangkan ruang kosong atas */
+        .report-page { padding: 10mm; box-sizing: border-box; }
+        
+        .logo-box { text-align: center; margin-bottom: 5px; }
+        .logo-box img { max-width: 100px; }
+        
+        h2 { text-align: center; text-decoration: underline; font-size: 16px; margin: 5px 0 15px 0; text-transform: uppercase; }
+        
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        th, td { border: 1px solid black; padding: 6px 8px; font-size: 12px; word-wrap: break-word; vertical-align: top; }
+        th { background-color: #f2f2f2; width: 30%; text-align: left; }
 
-        /* Grid Gambar */
-        .photo-grid { display: block; width: 100%; margin-top: 20px; }
-        .img-wrapper { display: inline-block; width: 48%; margin: 1%; text-align: center; vertical-align: top; }
-        .img-wrapper img { width: 100%; height: 200px; object-fit: contain; border: 1px solid #ccc; background: #fff; }
-        .page-break { page-break-before: always; }
+        /* Bahagian Foto di Muka Surat Baru */
+        .photo-page { page-break-before: always; padding: 10mm; text-align: center; }
+        .photo-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        .img-wrapper { width: 45%; border: 1px solid #ccc; padding: 5px; background: #fff; margin-bottom: 10px; }
+        .img-wrapper img { width: 100%; height: 180px; object-fit: contain; }
     </style>
 </head>
 <body>
 
-<h1 style="text-align:center;">Sistem Laporan Perhimpunan</h1>
-
 <div class="container">
     <div class="form-area">
-        <label>Tarikh (Contoh: 2 Januari 2026)</label>
-        <input type="text" id="tarikh" placeholder="2 Januari 2026">
-        
+        <h3 style="margin-top:0">Input Laporan</h3>
+        <label>Tarikh (Contoh: 7 Januari 2026)</label>
+        <input type="text" id="tarikh" placeholder="7 Januari 2026">
         <label>Hari</label>
-        <input type="text" id="hari" placeholder="Isnin">
-
+        <input type="text" id="hari" placeholder="Rabu">
         <label>Masa Mula</label>
         <input type="text" id="masa" placeholder="07:30">
 
-        <label>Senarai Staf (Klik untuk berbilang, atau tekan butang bawah)</label>
+        <label>Senarai Staf Hadir</label>
         <select id="staf" multiple size="8"></select>
         <div class="btn-group">
-            <button type="button" class="btn-select" onclick="selectAllStaf()">Pilih Semua</button>
-            <button type="button" class="btn-select" style="background-color:#e67e22;" onclick="clearStaf()">Kosongkan</button>
+            <button type="button" class="btn-blue" onclick="selectAllStaf()">Pilih Semua</button>
+            <button type="button" class="btn-blue" style="background-color:#95a5a6" onclick="clearStaf()">Reset</button>
         </div>
 
         <label>Tema Sivik</label>
         <input type="text" id="tema">
-
-        <label>Nama Pengacara (Murid/Guru)</label>
+        <label>Nama Pengacara</label>
         <input type="text" id="pengacara">
 
         <label>Ucapan Guru Besar</label>
         <textarea id="gb"></textarea>
-
         <label>Ucapan GPK Pentadbiran</label>
         <textarea id="gpk_admin"></textarea>
-
         <label>Ucapan GPK HEM</label>
         <textarea id="gpk_hem"></textarea>
-
         <label>Ucapan GPK Kokurikulum</label>
         <textarea id="gpk_koku"></textarea>
-
         <label>Ucapan Staf Lain</label>
         <textarea id="staf_lain"></textarea>
 
-        <label>Ditangguhkan Pada Jam</label>
-        <input type="text" id="tangguh" placeholder="08:10">
-
         <label>Disediakan Oleh</label>
         <input type="text" id="disediakan">
-
-        <label>Gambar Perhimpunan (Maks 10)</label>
+        <label>Gambar (Maks 10)</label>
         <input type="file" id="inputPhotos" accept="image/*" multiple>
 
-        <button class="btn-pdf" onclick="generatePDF()">MUAT TURUN PDF</button>
+        <button class="btn-green" onclick="generatePDF()">JANA PDF (2 MUKA SURAT)</button>
     </div>
 
     <div class="preview-area">
-        <div id="pdf-render">
-            <div class="logo-box">
-                <img src="logo.png" alt="Logo Sekolah">
+        <div id="pdf-content">
+            <div class="report-page">
+                <div class="logo-box">
+                    <img src="logo.png" alt="Logo Sekolah">
+                </div>
+                <h2>LAPORAN PERHIMPUNAN MINGGUAN</h2>
+                <table>
+                    <tr><th>Tarikh / Hari</th><td id="pvTarikhHari"></td></tr>
+                    <tr><th>Masa Mula</th><td id="pvMasa"></td></tr>
+                    <tr><th>Kehadiran Staf</th><td id="pvStaf"></td></tr>
+                    <tr><th>Tema Sivik</th><td id="pvTema"></td></tr>
+                    <tr><th>Pengacara</th><td id="pvPengacara"></td></tr>
+                    <tr><th>Ucapan Guru Besar</th><td id="pvGB"></td></tr>
+                    <tr><th>Ucapan GPK Pentadbiran</th><td id="pvGPKAdmin"></td></tr>
+                    <tr><th>Ucapan GPK HEM</th><td id="pvGPKHEM"></td></tr>
+                    <tr><th>Ucapan GPK Kokurikulum</th><td id="pvGPKKoku"></td></tr>
+                    <tr><th>Ucapan Staf Lain</th><td id="pvStafLain"></td></tr>
+                    <tr><th>Disediakan Oleh</th><td id="pvDisediakan"></td></tr>
+                    <tr><th>Disahkan Oleh</th><td><strong>Ling Lee Ann</strong><br>Guru Besar SJK(C) Chung San</td></tr>
+                </table>
             </div>
-            <h2>LAPORAN PERHIMPUNAN SEKOLAH</h2>
-            <table>
-                <tr><th>Tarikh</th><td id="pvTarikh"></td></tr>
-                <tr><th>Hari</th><td id="pvHari"></td></tr>
-                <tr><th>Masa Mula</th><td id="pvMasa"></td></tr>
-                <tr><th>Senarai Staf Hadir</th><td id="pvStaf"></td></tr>
-                <tr><th>Tema Sivik</th><td id="pvTema"></td></tr>
-                <tr><th>Nama Pengacara</th><td id="pvPengacara"></td></tr>
-                <tr><th>Ucapan Guru Besar</th><td id="pvGB"></td></tr>
-                <tr><th>Ucapan GPK Pentadbiran</th><td id="pvGPKAdmin"></td></tr>
-                <tr><th>Ucapan GPK HEM</th><td id="pvGPKHEM"></td></tr>
-                <tr><th>Ucapan GPK Kokurikulum</th><td id="pvGPKKoku"></td></tr>
-                <tr><th>Ucapan Staf Lain</th><td id="pvStafLain"></td></tr>
-                <tr><th>Ditangguhkan Pada</th><td id="pvTangguh"></td></tr>
-                <tr><th>Disediakan Oleh</th><td id="pvDisediakan"></td></tr>
-                <tr><th>Disemak & Disahkan Oleh</th><td><strong>Ling Lee Ann</strong><br>Guru Besar SJK(C) Chung San</td></tr>
-            </table>
-            <div id="pvPhotos" class="photo-grid"></div>
+
+            <div id="photo-page-area" class="photo-page">
+                <h3 style="text-decoration: underline; margin-bottom: 20px;">LAMPIRAN GAMBAR</h3>
+                <div id="pvPhotos" class="photo-grid">
+                    <p style="color: gray; font-style: italic;">Sila pilih gambar untuk dipaparkan di sini.</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    const listNama = ["Ling Lee Ann","Kong Zhe Fong","Fong Cui Fung","Cynthia Ting Xing Rou","Florence Wong Zhi Yu","Goh Su Ching","Lau Yun Hee","Roland Ting Hock Sing","Sharmaine Daphne Anak Slyvester Bakar","Stephen Hii Yii Nan","Tu Hiong Hiong","Unice Wong Wen Wen","Zafrullah Bin Mohd Sabri","Wong Chui Ling","Claudia Mo Ong Yi","Evy Law Jia Jia","Yuki Ng Jiajing","Wee Chun Yang","Efira Nazation Anak Kennedy","Faizah Binti Othman","Mariani Binti Haili","Stacy Wan"];
+    const stafList = ["Ling Lee Ann","Kong Zhe Fong","Fong Cui Fung","Cynthia Ting Xing Rou","Florence Wong Zhi Yu","Goh Su Ching","Lau Yun Hee","Roland Ting Hock Sing","Sharmaine Daphne Anak Slyvester Bakar","Stephen Hii Yii Nan","Tu Hiong Hiong","Unice Wong Wen Wen","Zafrullah Bin Mohd Sabri","Wong Chui Ling","Claudia Mo Ong Yi","Evy Law Jia Jia","Yuki Ng Jiajing","Wee Chun Yang","Efira Nazation Anak Kennedy","Faizah Binti Othman","Mariani Binti Haili","Stacy Wan"];
 
-    const stafSelect = document.getElementById('staf');
-    listNama.sort().forEach(n => stafSelect.add(new Option(n, n)));
+    const select = document.getElementById('staf');
+    stafList.sort().forEach(s => select.add(new Option(s, s)));
 
     function selectAllStaf() {
-        Array.from(stafSelect.options).forEach(opt => opt.selected = true);
+        Array.from(select.options).forEach(opt => opt.selected = true);
         updatePreview();
     }
-    
     function clearStaf() {
-        Array.from(stafSelect.options).forEach(opt => opt.selected = false);
+        Array.from(select.options).forEach(opt => opt.selected = false);
         updatePreview();
     }
 
     function updatePreview() {
-        document.getElementById('pvTarikh').innerText = document.getElementById('tarikh').value || '-';
-        document.getElementById('pvHari').innerText = document.getElementById('hari').value || '-';
+        document.getElementById('pvTarikhHari').innerText = `${document.getElementById('tarikh').value} (${document.getElementById('hari').value})`;
         document.getElementById('pvMasa').innerText = document.getElementById('masa').value || '-';
         document.getElementById('pvTema').innerText = document.getElementById('tema').value || '-';
         document.getElementById('pvPengacara').innerText = document.getElementById('pengacara').value || '-';
@@ -153,23 +147,19 @@
         document.getElementById('pvGPKHEM').innerText = document.getElementById('gpk_hem').value || '-';
         document.getElementById('pvGPKKoku').innerText = document.getElementById('gpk_koku').value || '-';
         document.getElementById('pvStafLain').innerText = document.getElementById('staf_lain').value || '-';
-        document.getElementById('pvTangguh').innerText = document.getElementById('tangguh').value || '-';
         document.getElementById('pvDisediakan').innerText = document.getElementById('disediakan').value || '-';
 
-        const selected = Array.from(stafSelect.selectedOptions).map(o => o.value);
+        const selected = Array.from(select.selectedOptions).map(o => o.value);
         document.getElementById('pvStaf').innerText = selected.length ? selected.join(", ") : "-";
     }
 
-    // Pantau semua input
-    document.querySelectorAll('input, textarea, select').forEach(el => {
-        el.addEventListener('input', updatePreview);
-    });
+    document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', updatePreview));
 
-    // Urus Gambar
     document.getElementById('inputPhotos').addEventListener('change', async function(e) {
         const container = document.getElementById('pvPhotos');
         container.innerHTML = '';
         const files = Array.from(e.target.files);
+        if(files.length === 0) { container.innerHTML = '<p>Tiada gambar dipilih</p>'; return; }
 
         for (let i = 0; i < files.length; i++) {
             const reader = new FileReader();
@@ -177,9 +167,7 @@
                 reader.onload = (ev) => {
                     const div = document.createElement('div');
                     div.className = 'img-wrapper';
-                    // Page break setiap 4 gambar
-                    if (i > 0 && i % 4 === 0) div.classList.add('page-break');
-                    div.innerHTML = `<img src="${ev.target.result}"><p style="font-size:11px;">Gambar ${i+1}</p>`;
+                    div.innerHTML = `<img src="${ev.target.result}"><p style="font-size:10px; margin:5px 0;">Gambar ${i+1}</p>`;
                     container.appendChild(div);
                     resolve();
                 };
@@ -190,27 +178,19 @@
 
     async function generatePDF() {
         updatePreview();
-        const element = document.getElementById('pdf-render');
-        const tarikhFail = document.getElementById('tarikh').value || new Date().toLocaleDateString().replace(/\//g, '-');
+        const element = document.getElementById('pdf-content');
+        const dateInput = document.getElementById('tarikh').value || 'Tanpa Tarikh';
 
         const opt = {
-            margin: [10, 10, 10, 10],
-            filename: `Laporan Perhimpunan Sekolah ${tarikhFail}.pdf`,
+            margin: 0,
+            filename: `Laporan Perhimpunan Sekolah ${dateInput}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, width: 800 },
+            html2canvas: { scale: 2, useCORS: true, letterRendering: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        try {
-            await html2pdf().set(opt).from(element).save();
-        } catch (error) {
-            console.error(error);
-            alert("Ralat menjana PDF. Sila cuba lagi.");
-        }
+        await html2pdf().set(opt).from(element).save();
     }
-
-    window.onload = updatePreview;
 </script>
-
 </body>
 </html>
