@@ -56,7 +56,7 @@ textarea { resize: vertical; min-height: 40px; }
   <input type="text" id="masa" class="gray-placeholder" placeholder="Contoh: 0940">
 
   <label>Senarai staf yang hadir</label>
-  <select id="staf" multiple size="6"></select>
+  <select id="staf" multiple size="12"></select>
   <button type="button" onclick="selectAllStaf()">Pilih Semua</button>
 
   <label>Tema sivik dan kewarganegaraan dalam perhimpunan</label>
@@ -125,7 +125,14 @@ textarea { resize: vertical; min-height: 40px; }
 <script>
 // 老师名单数组
 function loadStafList(){
-  const stafList = ["Lee Ann","Tan Hui","Chong Wei","Siti Aminah","Ahmad Faiz","Tiada"];
+  const stafList = [
+    "Ling Lee Ann","Kong Zhe Fong","Fong Cui Fung","Cynthia Ting Xing Rou",
+    "Florence Wong Zhi Yu","Goh Su Ching","Lau Yun Hee","Roland Ting Hock Sing",
+    "Sharmaine Daphne Anak Slyvester Bakar","Stephen Hii Yii Nan","Tu Hiong Hiong",
+    "Unice Wong Wen Wen","Zafrullah Bin Mohd Sabri","Wong Chui Ling","Claudia Mo Ong Yi",
+    "Evy Law Jia Jia","Yuki Ng Jiajing","Wee Chun Yang","Efira Nazation Anak Kennedy",
+    "Faizah Binti Othman","Mariani Binti Haili","Stacy Wan"
+  ];
   const stafSelect = document.getElementById('staf');
   stafList.forEach(name => {
     const option = document.createElement('option');
@@ -139,7 +146,7 @@ function loadStafList(){
 function selectAllStaf(){
   const stafSelect = document.getElementById('staf');
   Array.from(stafSelect.options).forEach(option => {
-    if(option.value !== "Tiada") option.selected = true;
+    option.selected = true;
   });
 }
 
@@ -213,7 +220,7 @@ function generatePDF(){
   const dateStr = today.toISOString().slice(0,10);
 
   html2pdf().set({
-    margin: 10,
+    margin: [25.4, 31.8, 25.4, 31.8], // top, left, bottom, right mm
     filename: `Laporan_Perhimpunan_${dateStr}.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2, useCORS: true, windowWidth: 1240 },
