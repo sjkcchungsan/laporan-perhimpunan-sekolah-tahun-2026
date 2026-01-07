@@ -8,19 +8,18 @@
 body { font-family: Arial, sans-serif; margin: 20px; }
 .container { display: flex; gap: 20px; }
 .form-area { width: 45%; }
-.preview-area { width: 50%; border: 1px solid #ccc; padding: 10px; overflow: auto; height: 90vh; background: #fff; }
+.preview-area { width: 50%; border: 1px solid #ccc; padding: 10px; overflow: visible; background: #fff; }
 input, select, textarea, button { width: 100%; margin-bottom: 10px; padding: 5px; box-sizing: border-box; }
 textarea { resize: vertical; min-height: 40px; }
 .gray-placeholder::placeholder { color: gray; }
-.logo-preview { max-width: 150px; margin-bottom: 10px; display:block; }
-.photo-preview { display: flex; flex-wrap: wrap; gap: 5px; margin-top:10px; }
-.photo-preview img { max-width: 100px; border: 1px solid #ccc; padding: 2px; }
+.logo-preview { display: block; margin: 0 auto; max-width: 150px; }
 .pdf-section { padding: 10px; }
 .pdf-section h2 { text-align: center; margin: 10px 0; text-decoration: underline; }
 .pdf-section table { width: 100%; border-collapse: collapse; margin-top:10px; }
 .pdf-section table, .pdf-section th, .pdf-section td { border: 1px solid black; }
 .pdf-section th, .pdf-section td { padding: 5px; text-align: left; }
-.tiada { color: gray; font-style: italic; }
+.photo-preview-page { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; page-break-before: always; }
+.photo-preview-page img { max-width: 100px; border: 1px solid #ccc; padding: 2px; }
 </style>
 </head>
 <body>
@@ -77,8 +76,10 @@ textarea { resize: vertical; min-height: 40px; }
 <!-- 右侧预览 -->
 <div class="preview-area" id="preview">
   <div class="pdf-section">
-    <!-- 固定 Logo -->
-    <img id="logoPreview" class="logo-preview" src="logo.png" alt="Logo Sekolah">
+    <!-- Logo 居中 -->
+    <div>
+      <img id="logoPreview" class="logo-preview" src="logo.png" alt="Logo Sekolah">
+    </div>
 
     <h2>Laporan Perhimpunan Sekolah</h2>
 
@@ -99,15 +100,15 @@ textarea { resize: vertical; min-height: 40px; }
       <tr><th>Disemak dan disahkan oleh</th><td>Ling Lee Ann, Guru Besar SJK(C) Chung San</td></tr>
     </table>
 
-    <!-- 照片固定在 PDF 最下面 -->
-    <div class="photo-preview" id="photoPreviewPDF"></div>
+    <!-- 照片单独一页 -->
+    <div class="photo-preview-page" id="photoPreviewPDF"></div>
 
     <button onclick="generatePDF()">Jana PDF</button>
   </div>
 </div>
 
 <script>
-// 老师名单数组（修改这里就可以增减老师）
+// 老师名单数组（随时增减）
 function loadStafList(){
   const stafList = ["Lee Ann","Tan Hui","Chong Wei","Siti Aminah","Ahmad Faiz","Tiada"];
   const stafSelect = document.getElementById('staf');
@@ -119,7 +120,7 @@ function loadStafList(){
   });
 }
 
-// 一键选择全部
+// 一键全选
 function selectAllStaf(){
   const stafSelect = document.getElementById('staf');
   Array.from(stafSelect.options).forEach(option => {
@@ -147,7 +148,7 @@ function updatePreview() {
   document.getElementById('pvTangguh').innerText = document.getElementById('tangguh').value || 'Tiada';
   document.getElementById('pvDisediakan').innerText = document.getElementById('disediakan').value || 'Tiada';
 
-  // 照片固定在 PDF 最下面
+  // 照片单独新页
   const files = document.getElementById('photosUpload').files;
   const previewPDF = document.getElementById('photoPreviewPDF');
   previewPDF.innerHTML = '';
@@ -156,10 +157,6 @@ function updatePreview() {
     reader.onload = function(evt){
       const img = document.createElement('img');
       img.src = evt.target.result;
-      img.style.maxWidth = '100px';
-      img.style.margin = '3px';
-      img.style.border = '1px solid #ccc';
-      img.style.padding = '2px';
       previewPDF.appendChild(img);
     }
     reader.readAsDataURL(file);
@@ -177,12 +174,19 @@ window.onload = function(){
   updatePreview();
 }
 
-// 生成 PDF
+// 生成 PDF (A4)
 function generatePDF(){
   const element = document.getElementById('preview');
   const today = new Date();
   const dateStr = today.toISOString().slice(0,10);
-  html2pdf().set({filename: `Laporan_Perhimpunan_${dateStr}.pdf`, html2canvas:{scale:2}}).from(element).save();
+
+  html2pdf().set({
+    margin: 10,
+    filename: `Laporan_Perhimpunan_${dateStr}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  }).from(element).save();
 }
 </script>
 
