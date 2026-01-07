@@ -4,285 +4,163 @@
 <meta charset="UTF-8">
 <title>Laporan Perhimpunan Sekolah</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
 <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
-    h1 { text-align: center; color: #333; }
+    body { font-family: Arial, sans-serif; margin: 20px; background-color: #f0f2f5; }
+    .container { display: flex; gap: 20px; }
     
-    .container { display: flex; gap: 20px; align-items: flex-start; }
+    /* Bahagian Input */
+    .form-area { width: 40%; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
     
-    /* Bahagian Borang Input */
-    .form-area { 
-        width: 40%; 
-        background: #fff; 
-        padding: 20px; 
-        border-radius: 8px; 
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        max-height: 90vh;
-        overflow-y: auto;
-    }
+    /* Bahagian Preview - Di skrin nampak 60% */
+    .preview-area { width: 60%; background: white; padding: 15px; border: 1px solid #ccc; min-height: 100vh; }
     
-    /* Bahagian Pratinjau (Preview) */
-    .preview-area { 
-        width: 60%; 
-        background: #fff; 
-        padding: 40px; 
-        border: 1px solid #ccc; 
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    /* Kelas khas untuk PDF supaya lebar penuh 100% */
-    .pdf-export-mode {
-        width: 100% !important;
+    /* CSS KHAS UNTUK PDF (PENTING) */
+    /* Apabila menjana PDF, kita akan paksa elemen ini jadi lebar A4 standard */
+    .export-pdf-style {
+        width: 794px !important; /* Lebar tepat untuk A4 pada 96 DPI */
+        padding: 40px !important;
+        margin: 0 !important;
         box-shadow: none !important;
         border: none !important;
     }
 
-    label { font-weight: bold; display: block; margin-top: 10px; }
-    input, select, textarea, button { width: 100%; margin-bottom: 10px; padding: 8px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; }
-    textarea { resize: vertical; min-height: 60px; }
-    
-    button { 
-        background-color: #007bff; 
-        color: white; 
-        border: none; 
-        cursor: pointer; 
-        font-weight: bold;
-        margin-top: 10px;
-    }
-    button:hover { background-color: #0056b3; }
+    input, textarea, select, button { width: 100%; margin-bottom: 12px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+    label { font-weight: bold; display: block; margin-bottom: 5px; }
 
-    /* Gaya Kandungan Laporan */
-    .pdf-section { width: 100%; }
-    .logo-preview { display: block; margin: 0 auto; max-width: 120px; margin-bottom: 10px; }
-    .pdf-section h2 { text-align: center; margin: 10px 0; text-decoration: underline; text-transform: uppercase; font-size: 18px; }
+    /* Gaya Kandungan PDF */
+    .pdf-content { width: 100%; color: black; }
+    .logo-img { display: block; margin: 0 auto 10px; max-width: 120px; }
+    h2 { text-align: center; text-decoration: underline; margin-bottom: 20px; font-size: 18px; }
     
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed; }
-    table, th, td { border: 1px solid black; }
-    th { width: 30%; background-color: #f2f2f2; text-align: left; padding: 8px; }
-    td { width: 70%; padding: 8px; word-wrap: break-word; vertical-align: top; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    th, td { border: 1px solid black; padding: 10px; text-align: left; vertical-align: top; word-wrap: break-word; }
+    th { width: 30%; background-color: #f9f9f9; }
 
-    /* Gaya Gambar dalam PDF */
-    .photo-container {
-        margin-top: 20px;
-    }
-    .photo-page {
-        page-break-before: always;
-        display: block;
-        text-align: center;
-        width: 100%;
-    }
-    .photo-wrapper {
-        display: inline-block;
-        width: 45%;
-        margin: 10px;
-        text-align: center;
-    }
-    .photo-wrapper img {
-        width: 100%;
-        height: 200px;
-        object-fit: contain;
-        border: 1px solid #eee;
-    }
+    /* Gaya Gambar */
+    .photo-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; justify-content: center; }
+    .photo-item { width: 45%; border: 1px solid #ddd; padding: 5px; text-align: center; page-break-inside: avoid; }
+    .photo-item img { width: 100%; height: 200px; object-fit: contain; }
+    .page-break { page-break-before: always; }
 </style>
 </head>
 <body>
 
-<h1>Sistem Laporan Perhimpunan</h1>
-
 <div class="container">
     <div class="form-area">
-        <label>Tarikh</label>
-        <input type="text" id="tarikh" placeholder="Contoh: 2 Januari 2026">
-
-        <label>Hari</label>
-        <input type="text" id="hari" placeholder="Contoh: Isnin">
-
-        <label>Masa Mula</label>
-        <input type="text" id="masa" placeholder="Contoh: 07:30 Pagi">
-
-        <label>Senarai Staf Hadir (Tekan Ctrl untuk pilih banyak)</label>
+        <h2>Input Laporan</h2>
+        <label>Tarikh</label><input type="text" id="tarikh" placeholder="Contoh: 2 Januari 2026">
+        <label>Hari</label><input type="text" id="hari" placeholder="Contoh: Isnin">
+        <label>Masa</label><input type="text" id="masa" placeholder="07:30 - 08:00">
+        <label>Pilih Staf (Guna Ctrl untuk pilih banyak)</label>
         <select id="staf" multiple size="8"></select>
-        <button type="button" onclick="selectAllStaf()">Pilih Semua Staf</button>
-
-        <label>Tema Sivik</label>
-        <input type="text" id="tema" placeholder="Kasih sayang / Hormat-menghormati">
-
-        <label>Nama Pengacara</label>
-        <input type="text" id="pengacara">
-
-        <label>Ucapan Guru Besar</label>
-        <textarea id="gb"></textarea>
-
-        <label>Ucapan GPK Pentadbiran</label>
-        <textarea id="gpk_admin"></textarea>
-
-        <label>Ucapan GPK HEM</label>
-        <textarea id="gpk_hem"></textarea>
-
-        <label>Ucapan GPK Kokurikulum</label>
-        <textarea id="gpk_kokurikulum"></textarea>
-
-        <label>Ucapan Staf Lain</label>
-        <textarea id="staf_lain"></textarea>
-
-        <label>Ditangguhkan pada jam</label>
-        <input type="text" id="tangguh" placeholder="Contoh: 08:10 Pagi">
-
-        <label>Disediakan oleh</label>
-        <input type="text" id="disediakan">
-
-        <label style="color: red;">Muat Naik Gambar (Maks 10)</label>
-        <input type="file" id="photosUpload" accept="image/*" multiple>
+        <label>Tema</label><input type="text" id="tema">
+        <label>Pengacara</label><input type="text" id="pengacara">
+        <label>Ucapan Guru Besar</label><textarea id="gb"></textarea>
+        <label>Lain-lain Ucapan</label><textarea id="lain"></textarea>
+        <label>Disediakan Oleh</label><input type="text" id="disediakan">
+        <label>Gambar (Maks 10)</label>
+        <input type="file" id="photoInput" accept="image/*" multiple>
         
-        <button onclick="generatePDF()" style="background-color: #28a745; font-size: 1.1em;">JANA & MUAT TURUN PDF</button>
+        <button onclick="generatePDF()" style="background: #28a745; color: white; font-weight: bold; cursor: pointer;">MUAT TURUN PDF</button>
     </div>
 
-    <div class="preview-area" id="preview">
-        <div class="pdf-section">
-            <img id="logoPreview" class="logo-preview" src="logo.png" alt="Logo Sekolah">
-            <h2>LAPORAN PERHIMPUNAN MINGGUAN</h2>
-
+    <div class="preview-area" id="previewContainer">
+        <div id="pdfContent" class="pdf-content">
+            <img src="logo.png" class="logo-img" alt="Logo Sekolah">
+            <h2>LAPORAN PERHIMPUNAN SEKOLAH</h2>
             <table>
                 <tr><th>Tarikh</th><td id="pvTarikh"></td></tr>
                 <tr><th>Hari</th><td id="pvHari"></td></tr>
-                <tr><th>Masa Mula</th><td id="pvMasa"></td></tr>
+                <tr><th>Masa</th><td id="pvMasa"></td></tr>
                 <tr><th>Staf Hadir</th><td id="pvStaf"></td></tr>
                 <tr><th>Tema</th><td id="pvTema"></td></tr>
                 <tr><th>Pengacara</th><td id="pvPengacara"></td></tr>
                 <tr><th>Ucapan Guru Besar</th><td id="pvGB"></td></tr>
-                <tr><th>Ucapan GPK Pentadbiran</th><td id="pvGPKAdmin"></td></tr>
-                <tr><th>Ucapan GPK HEM</th><td id="pvGPKHEM"></td></tr>
-                <tr><th>Ucapan GPK Kokurikulum</th><td id="pvGPKKoku"></td></tr>
-                <tr><th>Ucapan Staf Lain</th><td id="pvStafLain"></td></tr>
-                <tr><th>Ditangguhkan</th><td id="pvTangguh"></td></tr>
-                <tr><th>Disediakan oleh</th><td id="pvDisediakan"></td></tr>
-                <tr><th>Disahkan oleh</th><td><strong>Ling Lee Ann</strong><br>Guru Besar SJK(C) Chung San</td></tr>
+                <tr><th>Lain-lain Ucapan</th><td id="pvLain"></td></tr>
+                <tr><th>Disediakan Oleh</th><td id="pvDisediakan"></td></tr>
+                <tr><th>Disahkan Oleh</th><td><strong>Ling Lee Ann</strong><br>Guru Besar SJK(C) Chung San</td></tr>
             </table>
-
-            <div id="photoPreviewPDF" class="photo-container"></div>
+            
+            <div id="photoGallery" class="photo-grid"></div>
         </div>
     </div>
 </div>
 
 <script>
-// 1. Senarai Staf
-const stafList = [
-    "Ling Lee Ann","Kong Zhe Fong","Fong Cui Fung","Cynthia Ting Xing Rou",
-    "Florence Wong Zhi Yu","Goh Su Ching","Lau Yun Hee","Roland Ting Hock Sing",
-    "Sharmaine Daphne Anak Slyvester Bakar","Stephen Hii Yii Nan","Tu Hiong Hiong",
-    "Unice Wong Wen Wen","Zafrullah Bin Mohd Sabri","Wong Chui Ling","Claudia Mo Ong Yi",
-    "Evy Law Jia Jia","Yuki Ng Jiajing","Wee Chun Yang","Efira Nazation Anak Kennedy",
-    "Faizah Binti Othman","Mariani Binti Haili","Stacy Wan"
-];
+    const stafList = ["Ling Lee Ann","Kong Zhe Fong","Fong Cui Fung","Cynthia Ting Xing Rou","Florence Wong Zhi Yu","Goh Su Ching","Lau Yun Hee","Roland Ting Hock Sing","Sharmaine Daphne Anak Slyvester Bakar","Stephen Hii Yii Nan","Tu Hiong Hiong","Unice Wong Wen Wen","Zafrullah Bin Mohd Sabri","Wong Chui Ling","Claudia Mo Ong Yi","Evy Law Jia Jia","Yuki Ng Jiajing","Wee Chun Yang","Efira Nazation Anak Kennedy","Faizah Binti Othman","Mariani Binti Haili","Stacy Wan"];
 
-function loadStafList(){
-    const stafSelect = document.getElementById('staf');
-    stafList.sort().forEach(name => {
-        const option = document.createElement('option');
-        option.value = name;
-        option.textContent = name;
-        stafSelect.appendChild(option);
+    // Isi senarai staf
+    const select = document.getElementById('staf');
+    stafList.sort().forEach(s => {
+        let opt = document.createElement('option');
+        opt.value = opt.text = s;
+        select.add(opt);
     });
-}
 
-function selectAllStaf(){
-    const stafSelect = document.getElementById('staf');
-    Array.from(stafSelect.options).forEach(option => option.selected = true);
-    updatePreview();
-}
+    // Update preview secara automatik
+    function updatePreview() {
+        document.getElementById('pvTarikh').innerText = document.getElementById('tarikh').value;
+        document.getElementById('pvHari').innerText = document.getElementById('hari').value;
+        document.getElementById('pvMasa').innerText = document.getElementById('masa').value;
+        document.getElementById('pvTema').innerText = document.getElementById('tema').value;
+        document.getElementById('pvPengacara').innerText = document.getElementById('pengacara').value;
+        document.getElementById('pvGB').innerText = document.getElementById('gb').value;
+        document.getElementById('pvLain').innerText = document.getElementById('lain').value;
+        document.getElementById('pvDisediakan').innerText = document.getElementById('disediakan').value;
 
-// 2. Kemas kini Pratinjau Teks
-function updatePreview() {
-    document.getElementById('pvTarikh').innerText = document.getElementById('tarikh').value || '-';
-    document.getElementById('pvHari').innerText = document.getElementById('hari').value || '-';
-    document.getElementById('pvMasa').innerText = document.getElementById('masa').value || '-';
-
-    const selectedStaf = Array.from(document.getElementById('staf').selectedOptions).map(opt => opt.value);
-    document.getElementById('pvStaf').innerText = selectedStaf.length ? selectedStaf.join(", ") : "-";
-
-    document.getElementById('pvTema').innerText = document.getElementById('tema').value || '-';
-    document.getElementById('pvPengacara').innerText = document.getElementById('pengacara').value || '-';
-    document.getElementById('pvGB').innerText = document.getElementById('gb').value || '-';
-    document.getElementById('pvGPKAdmin').innerText = document.getElementById('gpk_admin').value || '-';
-    document.getElementById('pvGPKHEM').innerText = document.getElementById('gpk_hem').value || '-';
-    document.getElementById('pvGPKKoku').innerText = document.getElementById('gpk_kokurikulum').value || '-';
-    document.getElementById('pvStafLain').innerText = document.getElementById('staf_lain').value || '-';
-    document.getElementById('pvTangguh').innerText = document.getElementById('tangguh').value || '-';
-    document.getElementById('pvDisediakan').innerText = document.getElementById('disediakan').value || '-';
-}
-
-// 3. Kemas kini Gambar (Async untuk pastikan gambar dimuatkan)
-async function updatePreviewPhotos() {
-    const files = document.getElementById('photosUpload').files;
-    const photoContainer = document.getElementById('photoPreviewPDF');
-    photoContainer.innerHTML = ''; 
-
-    if (files.length === 0) return;
-
-    const maxPerPage = 4; 
-    for (let i = 0; i < files.length; i += maxPerPage) {
-        const pageDiv = document.createElement('div');
-        pageDiv.className = 'photo-page';
-        
-        const chunk = Array.from(files).slice(i, i + maxPerPage);
-        for (const file of chunk) {
-            const dataUrl = await new Promise(resolve => {
-                const reader = new FileReader();
-                reader.onload = e => resolve(e.target.result);
-                reader.readAsDataURL(file);
-            });
-
-            const wrapper = document.createElement('div');
-            wrapper.className = 'photo-wrapper';
-            const img = document.createElement('img');
-            img.src = dataUrl;
-            wrapper.appendChild(img);
-            pageDiv.appendChild(wrapper);
-        }
-        photoContainer.appendChild(pageDiv);
+        const selectedStaf = Array.from(select.selectedOptions).map(o => o.value);
+        document.getElementById('pvStaf').innerText = selectedStaf.join(', ');
     }
-}
 
-// 4. Jana PDF (Fungsi Utama)
-async function generatePDF(){
-    const element = document.getElementById('preview');
-    
-    // Pastikan preview dikemaskini sebelum jana
-    updatePreview();
-    await updatePreviewPhotos();
+    // Handle gambar
+    document.getElementById('photoInput').addEventListener('change', function(e) {
+        const gallery = document.getElementById('photoGallery');
+        gallery.innerHTML = '';
+        const files = e.target.files;
 
-    // Tambah kelas sementara supaya PDF jadi lebar penuh (bukan 60%)
-    element.classList.add('pdf-export-mode');
-
-    const opt = {
-        margin: [15, 15, 15, 15],
-        filename: `Laporan_Perhimpunan_${new Date().toLocaleDateString()}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { 
-            scale: 2, 
-            useCORS: true,
-            logging: false
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-
-    // Jalankan html2pdf
-    html2pdf().set(opt).from(element).save().then(() => {
-        // Buang semula kelas sementara selepas PDF siap muat turun
-        element.classList.remove('pdf-export-mode');
+        Array.from(files).forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const div = document.createElement('div');
+                div.className = 'photo-item';
+                // Tambah page break selepas 4 gambar
+                if(index > 0 && index % 4 === 0) div.classList.add('page-break');
+                
+                div.innerHTML = `<img src="${event.target.result}"><p>Gambar ${index + 1}</p>`;
+                gallery.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        });
     });
-}
 
-// Event Listeners
-document.querySelectorAll('input, textarea, select').forEach(el => {
-    el.addEventListener('input', updatePreview);
-});
+    // Pasang listener pada semua input
+    document.querySelectorAll('input, textarea, select').forEach(el => {
+        el.addEventListener('input', updatePreview);
+    });
 
-document.getElementById('photosUpload').addEventListener('change', updatePreviewPhotos);
+    async function generatePDF() {
+        const element = document.getElementById('pdfContent');
+        const container = document.getElementById('previewContainer');
 
-window.onload = loadStafList;
+        // LANGKAH 1: Paksa saiz A4 sebelum jana
+        container.classList.add('export-pdf-style');
+
+        const opt = {
+            margin: [10, 10, 10, 10],
+            filename: 'Laporan_Perhimpunan.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // LANGKAH 2: Jana PDF
+        try {
+            await html2pdf().set(opt).from(element).save();
+        } finally {
+            // LANGKAH 3: Kembalikan gaya asal selepas siap
+            container.classList.remove('export-pdf-style');
+        }
+    }
 </script>
-
 </body>
 </html>
