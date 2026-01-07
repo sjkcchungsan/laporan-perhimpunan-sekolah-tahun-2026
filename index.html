@@ -6,7 +6,6 @@
     <title>Sistem Laporan SJKC Chung San</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        /* ASAS & LAYOUT */
         body { font-family: Arial, sans-serif; background-color: #f0f2f5; margin: 0; padding: 10px; }
         .container { display: flex; flex-direction: column; gap: 20px; }
         
@@ -16,41 +15,29 @@
             .preview-area { width: 65%; }
         }
 
-        /* BORANG INPUT */
         .form-area { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         label { font-weight: bold; display: block; margin-top: 15px; font-size: 0.9rem; }
         input, textarea, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
-        ::placeholder { color: #a9a9a9; }
-
+        
         .btn-group { display: flex; gap: 10px; margin-top: 10px; }
         .btn-blue { background-color: #3498db; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; flex: 1; font-weight: bold; }
         .btn-green { background-color: #27ae60; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; cursor: pointer; font-size: 1.1rem; font-weight: bold; margin-top: 25px; }
 
-        /* KAWASAN PREVIEW (DI SKRIN) */
+        /* PREVIEW PDF (UNIVERSAL) */
         .preview-area { background: #555; padding: 20px; overflow-x: auto; display: flex; justify-content: center; }
-
-        /* KANDUNGAN PDF (SAIZ TETAP A4) */
         #pdf-content { 
-            background: white; 
-            width: 210mm; 
-            min-height: 297mm; 
-            padding: 10mm 15mm; 
-            box-sizing: border-box; 
-            margin: 0 auto;
-            flex-shrink: 0;
-            color: black;
+            background: white; width: 210mm; min-height: 297mm; padding: 10mm 15mm; 
+            box-sizing: border-box; margin: 0 auto; flex-shrink: 0; color: black;
         }
 
-        /* GAYA LAPORAN (TOP ALIGNED) */
         .logo-box { text-align: center; margin: 0; padding: 0; }
         .logo-box img { max-width: 100px; height: auto; }
         h2 { text-align: center; text-decoration: underline; font-size: 18px; margin: 5px 0 15px 0; text-transform: uppercase; }
         
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 1px solid black; margin: 0 auto; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 1px solid black; }
         th, td { border: 1px solid black; padding: 8px; font-size: 13px; word-wrap: break-word; vertical-align: top; }
         th { background-color: #f2f2f2; width: 35%; text-align: left; }
 
-        /* HALAMAN GAMBAR */
         .photo-page { page-break-before: always; text-align: center; padding-top: 10mm; }
         .photo-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 15px; }
         .img-wrapper { width: 45%; border: 1px solid #000; padding: 5px; background: #fff; box-sizing: border-box; }
@@ -62,26 +49,62 @@
 <div class="container">
     <div class="form-area">
         <h3 style="margin:0; color:#2c3e50;">Input Laporan</h3>
-        <label>Tarikh</label><input type="text" id="tarikh" placeholder="12 Januari 2026">
-        <label>Hari</label><input type="text" id="hari" placeholder="Isnin">
-        <label>Masa Mula</label><input type="text" id="masa" placeholder="0940">
+        
+        <label>Tarikh</label>
+        <input type="text" id="tarikh" placeholder="12 Januari 2026">
+        
+        <label>Hari</label>
+        <select id="hari">
+            <option value="" disabled selected>Pilih Hari</option>
+            <option value="Isnin">Isnin</option>
+            <option value="Selasa">Selasa</option>
+            <option value="Rabu">Rabu</option>
+            <option value="Khamis">Khamis</option>
+            <option value="Jumaat">Jumaat</option>
+            <option value="Sabtu">Sabtu</option>
+            <option value="Ahad">Ahad</option>
+        </select>
+        
+        <label>Masa Mula</label>
+        <input type="text" id="masa" placeholder="0940">
 
-        <label>Senarai Staf (Pilihan Berbilang)</label>
-        <select id="staf" multiple size="8" style="height: 200px;"></select>
+        <label>Senarai Staf Hadir (Pilih Berbilang)</label>
+        <select id="staf" multiple size="8" style="height: 180px;"></select>
         <div class="btn-group">
             <button type="button" class="btn-blue" onclick="selectAllStaf()">Pilih Semua</button>
             <button type="button" class="btn-blue" style="background-color:#95a5a6" onclick="clearStaf()">Reset</button>
         </div>
 
-        <label>Tema Sivik</label><input type="text" id="tema" placeholder="Kasih Sayang/ Bertanggungjawab/ Kegembiraan/ Hormat-Menghormati">
-        <label>Nama Pengacara</label><input type="text" id="pengacara" placeholder="Nama Murid / Guru">
-        <label>Ucapan Guru Besar</label><textarea id="gb" placeholder="Ringkasan ucapan..."></textarea>
-        <label>Ucapan GPK Pentadbiran</label><textarea id="gpk_admin" placeholder="Ringkasan ucapan..."></textarea>
-        <label>Ucapan GPK HEM</label><textarea id="gpk_hem" placeholder="Ringkasan ucapan..."></textarea>
-        <label>Ucapan GPK Kokurikulum</label><textarea id="gpk_koku" placeholder="Ringkasan ucapan..."></textarea>
-        <label>Ucapan Staf Lain</label><textarea id="staf_lain" placeholder="Ringkasan ucapan..."></textarea>
-        <label>Disediakan Oleh</label><input type="text" id="disediakan" placeholder="Nama penyedia">
-        <label>Muat Naik Gambar</label><input type="file" id="inputPhotos" accept="image/*" multiple>
+        <label>Tema Sivik</label>
+        <select id="tema">
+            <option value="" disabled selected>Pilih Tema</option>
+            <option value="Kasih Sayang">Kasih Sayang</option>
+            <option value="Hormat-menghormati">Hormat-menghormati</option>
+            <option value="Bertanggungjawab">Bertanggungjawab</option>
+            <option value="Kegembiraan">Kegembiraan</option>
+        </select>
+        
+        <label>Nama Pengacara</label>
+        <input type="text" id="pengacara" placeholder="Nama Murid / Guru">
+        
+        <label>Ucapan Guru Besar</label>
+        <textarea id="gb" placeholder="Ringkasan ucapan..."></textarea>
+        <label>Ucapan GPK Pentadbiran</label>
+        <textarea id="gpk_admin" placeholder="Ringkasan ucapan..."></textarea>
+        <label>Ucapan GPK HEM</label>
+        <textarea id="gpk_hem" placeholder="Ringkasan ucapan..."></textarea>
+        <label>Ucapan GPK Kokurikulum</label>
+        <textarea id="gpk_koku" placeholder="Ringkasan ucapan..."></textarea>
+        <label>Ucapan Staf Lain</label>
+        <textarea id="staf_lain" placeholder="Ringkasan ucapan..."></textarea>
+        
+        <label>Disediakan Oleh</label>
+        <select id="disediakan">
+            <option value="" disabled selected>Pilih Nama</option>
+        </select>
+        
+        <label>Muat Naik Gambar</label>
+        <input type="file" id="inputPhotos" accept="image/*" multiple>
 
         <button id="btnJana" class="btn-green" onclick="generatePDF()">MUAT TURUN PDF</button>
     </div>
@@ -114,12 +137,18 @@
 </div>
 
 <script>
-    const stafList = ["Ling Lee Ann","Kong Zhe Fong","Fong Cui Fung","Cynthia Ting Xing Rou","Florence Wong Zhi Yu","Goh Su Ching","Lau Yun Hee","Roland Ting Hock Sing","Sharmaine Daphne Anak Slyvester Bakar","Stephen Hii Yii Nan","Tu Hiong Hiong","Unice Wong Wen Wen","Zafrullah Bin Mohd Sabri","Wong Chui Ling","Claudia Mo Ong Yi","Evy Law Jia Jia","Yuki Ng Jiajing","Wee Chun Yang","Efira Nazation Anak Kennedy","Faizah Binti Othman","Mariani Binti Haili","Stacy Wan"];
-    const select = document.getElementById('staf');
-    stafList.sort().forEach(s => select.add(new Option(s, s)));
+    const listNama = ["Ling Lee Ann","Kong Zhe Fong","Fong Cui Fung","Cynthia Ting Xing Rou","Florence Wong Zhi Yu","Goh Su Ching","Lau Yun Hee","Roland Ting Hock Sing","Sharmaine Daphne Anak Slyvester Bakar","Stephen Hii Yii Nan","Tu Hiong Hiong","Unice Wong Wen Wen","Zafrullah Bin Mohd Sabri","Wong Chui Ling","Claudia Mo Ong Yi","Evy Law Jia Jia","Yuki Ng Jiajing","Wee Chun Yang","Efira Nazation Anak Kennedy","Faizah Binti Othman","Mariani Binti Haili","Stacy Wan"].sort();
 
-    function selectAllStaf() { Array.from(select.options).forEach(o => o.selected = true); updatePreview(); }
-    function clearStaf() { Array.from(select.options).forEach(o => o.selected = false); updatePreview(); }
+    const selectStaf = document.getElementById('staf');
+    const selectDisediakan = document.getElementById('disediakan');
+
+    listNama.forEach(s => {
+        selectStaf.add(new Option(s, s));
+        selectDisediakan.add(new Option(s, s));
+    });
+
+    function selectAllStaf() { Array.from(selectStaf.options).forEach(o => o.selected = true); updatePreview(); }
+    function clearStaf() { Array.from(selectStaf.options).forEach(o => o.selected = false); updatePreview(); }
 
     function updatePreview() {
         document.getElementById('pvTarikh').innerText = document.getElementById('tarikh').value || '-';
@@ -133,7 +162,8 @@
         document.getElementById('pvGPKKoku').innerText = document.getElementById('gpk_koku').value || '-';
         document.getElementById('pvStafLain').innerText = document.getElementById('staf_lain').value || '-';
         document.getElementById('pvDisediakan').innerText = document.getElementById('disediakan').value || '-';
-        const sel = Array.from(select.selectedOptions).map(o => o.value);
+        
+        const sel = Array.from(selectStaf.selectedOptions).map(o => o.value);
         document.getElementById('pvStaf').innerText = sel.length ? sel.join(", ") : "-";
     }
 
@@ -159,34 +189,20 @@
         const btn = document.getElementById('btnJana');
         btn.innerText = "Sila tunggu...";
         btn.disabled = true;
-        
         const element = document.getElementById('pdf-content');
-        const fileName = `Laporan Perhimpunan Sekolah ${document.getElementById('tarikh').value || 'Baru'}.pdf`;
-
-        // Laraskan windowWidth mengikut saiz peranti (794px untuk A4 standard)
+        const tarikhVal = document.getElementById('tarikh').value || 'Baru';
         const isMobile = window.innerWidth < 992;
         
         const opt = {
             margin: 0,
-            filename: fileName,
+            filename: `Laporan Perhimpunan Sekolah ${tarikhVal}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true, 
-                width: 794,
-                windowWidth: isMobile ? 794 : window.innerWidth, // Laraskan secara dinamik
-                scrollY: 0,
-                scrollX: 0
-            },
+            html2canvas: { scale: 2, useCORS: true, width: 794, windowWidth: isMobile ? 794 : window.innerWidth },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        try {
-            await html2pdf().set(opt).from(element).save();
-        } finally {
-            btn.innerText = "MUAT TURUN PDF";
-            btn.disabled = false;
-        }
+        try { await html2pdf().set(opt).from(element).save(); } 
+        finally { btn.innerText = "MUAT TURUN PDF"; btn.disabled = false; }
     }
     window.onload = updatePreview;
 </script>
