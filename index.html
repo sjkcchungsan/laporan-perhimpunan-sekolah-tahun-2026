@@ -6,86 +6,57 @@
     <title>Sistem Laporan Perhimpunan SJKC Chung San</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f0f2f5; padding: 20px; margin: 0; }
+        body { font-family: Arial, sans-serif; background-color: #f0f2f5; padding: 10px; margin: 0; }
         .container { display: flex; flex-direction: column; gap: 20px; }
         
         @media (min-width: 992px) {
             .container { flex-direction: row; align-items: flex-start; }
-            .form-area { width: 40%; position: sticky; top: 10px; max-height: 95vh; overflow-y: auto; }
-            .preview-area { width: 60%; }
+            .form-area { width: 35%; position: sticky; top: 10px; max-height: 95vh; overflow-y: auto; }
+            .preview-area { width: 65%; }
         }
 
-        /* Bahagian Input */
-        .form-area { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        label { font-weight: bold; display: block; margin-top: 15px; font-size: 0.9rem; color: #333; }
-        
-        input, textarea, select { 
-            width: 100%; 
-            padding: 12px; 
-            margin-top: 5px; 
-            border: 1px solid #ccc; 
-            border-radius: 6px; 
-            box-sizing: border-box; 
-            font-size: 1rem;
-        }
-
-        /* Placeholder Kelabu */
-        ::placeholder { color: #a9a9a9; opacity: 1; }
-
-        /* Staf Multi-select hint */
-        .hint { font-size: 0.75rem; color: #666; font-weight: normal; margin-bottom: 5px; }
+        .form-area { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        label { font-weight: bold; display: block; margin-top: 15px; font-size: 0.9rem; }
+        input, textarea, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
+        ::placeholder { color: #a9a9a9; }
 
         .btn-group { display: flex; gap: 10px; margin-top: 10px; }
         .btn-blue { background-color: #3498db; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; flex: 1; font-weight: bold; }
         .btn-green { background-color: #27ae60; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; cursor: pointer; font-size: 1.1rem; font-weight: bold; margin-top: 25px; }
 
-        /* Gaya PDF (Top Aligned & Horizontally Centered) */
-        .preview-area { background: #ddd; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
+        /* PREVIEW PDF - Tetapan untuk telefon */
+        .preview-area { background: #ddd; padding: 10px; display: flex; justify-content: center; overflow-x: auto; }
+        #pdf-content { background: white; width: 210mm; padding: 10mm 15mm; box-sizing: border-box; margin: 0 auto; }
         
-        #pdf-content { 
-            background: white; 
-            width: 210mm; 
-            min-height: 297mm; 
-            padding: 10mm 15mm; /* Padding atas dikurangkan supaya rapat ke top */
-            box-sizing: border-box; 
-            margin: 0 auto; 
-            display: block;
-        }
-
         .logo-box { text-align: center; margin-bottom: 5px; }
-        .logo-box img { max-width: 100px; }
-        
+        .logo-box img { max-width: 100px; height: auto; }
         h2 { text-align: center; text-decoration: underline; font-size: 18px; margin: 0 0 15px 0; text-transform: uppercase; }
         
-        /* Jadual Excel Style */
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 0 auto; }
-        th, td { border: 1px solid black; padding: 8px 10px; font-size: 13px; word-wrap: break-word; vertical-align: top; }
-        th { background-color: #f2f2f2; width: 30%; text-align: left; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 1.5px solid black; }
+        th, td { border: 1px solid black; padding: 8px; font-size: 13px; word-wrap: break-word; vertical-align: top; }
+        th { background-color: #f2f2f2; width: 35%; text-align: left; }
 
-        /* Halaman Gambar */
         .photo-page { page-break-before: always; text-align: center; padding-top: 5mm; }
         .photo-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 15px; }
         .img-wrapper { width: 45%; border: 1px solid #000; padding: 5px; background: #fff; box-sizing: border-box; }
-        .img-wrapper img { width: 100%; height: 200px; object-fit: contain; }
+        .img-wrapper img { width: 100%; height: 180px; object-fit: contain; display: block; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="form-area">
-        <h3 style="margin:0 0 10px 0; color:#2c3e50;">Maklumat Laporan</h3>
+        <h3 style="margin:0; color:#2c3e50;">Input Laporan</h3>
         
         <label>Tarikh</label>
         <input type="text" id="tarikh" placeholder="12 Januari 2026">
-        
         <label>Hari</label>
         <input type="text" id="hari" placeholder="Isnin">
-        
         <label>Masa Mula</label>
         <input type="text" id="masa" placeholder="0940">
 
-        <label>Senarai Staf Hadir <span class="hint">(Klik untuk pilih banyak)</span></label>
-        <select id="staf" multiple size="10"></select>
+        <label>Senarai Staf Hadir (Pilihan Berbilang)</label>
+        <select id="staf" multiple size="8"></select>
         <div class="btn-group">
             <button type="button" class="btn-blue" onclick="selectAllStaf()">Pilih Semua</button>
             <button type="button" class="btn-blue" style="background-color:#95a5a6" onclick="clearStaf()">Reset</button>
@@ -93,41 +64,31 @@
 
         <label>Tema Sivik</label>
         <input type="text" id="tema" placeholder="Kasih Sayang/ Bertanggungjawab/ Kegembiraan/ Hormat-Menghormati">
-        
         <label>Nama Pengacara</label>
         <input type="text" id="pengacara" placeholder="Nama Murid / Guru">
-
         <label>Ucapan Guru Besar</label>
-        <textarea id="gb" placeholder="Masukkan ringkasan ucapan..."></textarea>
-        
+        <textarea id="gb" placeholder="Ringkasan ucapan..."></textarea>
         <label>Ucapan GPK Pentadbiran</label>
-        <textarea id="gpk_admin" placeholder="Masukkan ringkasan ucapan..."></textarea>
-        
+        <textarea id="gpk_admin" placeholder="Ringkasan ucapan..."></textarea>
         <label>Ucapan GPK HEM</label>
-        <textarea id="gpk_hem" placeholder="Masukkan ringkasan ucapan..."></textarea>
-        
+        <textarea id="gpk_hem" placeholder="Ringkasan ucapan..."></textarea>
         <label>Ucapan GPK Kokurikulum</label>
-        <textarea id="gpk_koku" placeholder="Masukkan ringkasan ucapan..."></textarea>
-        
+        <textarea id="gpk_koku" placeholder="Ringkasan ucapan..."></textarea>
         <label>Ucapan Staf Lain</label>
-        <textarea id="staf_lain" placeholder="Masukkan ringkasan ucapan..."></textarea>
-
+        <textarea id="staf_lain" placeholder="Ringkasan ucapan..."></textarea>
         <label>Disediakan Oleh</label>
-        <input type="text" id="disediakan" placeholder="Nama penyedia laporan">
+        <input type="text" id="disediakan" placeholder="Nama penyedia">
         
         <label>Muat Naik Gambar</label>
         <input type="file" id="inputPhotos" accept="image/*" multiple>
 
-        <button class="btn-green" onclick="generatePDF()">JANA & MUAT TURUN PDF</button>
+        <button id="btnJana" class="btn-green" onclick="generatePDF()">JANA PDF</button>
     </div>
 
     <div class="preview-area">
         <div id="pdf-content">
-            <div class="logo-box">
-                <img src="logo.png" alt="Logo Sekolah">
-            </div>
+            <div class="logo-box"><img src="logo.png" alt="Logo"></div>
             <h2>LAPORAN PERHIMPUNAN MINGGUAN</h2>
-            
             <table>
                 <tr><th>Tarikh</th><td id="pvTarikh"></td></tr>
                 <tr><th>Hari</th><td id="pvHari"></td></tr>
@@ -143,12 +104,9 @@
                 <tr><th>Disediakan Oleh</th><td id="pvDisediakan"></td></tr>
                 <tr><th>Disahkan Oleh</th><td><strong>Ling Lee Ann</strong><br>Guru Besar SJK(C) Chung San</td></tr>
             </table>
-
             <div id="photo-area" class="photo-page">
                 <h3 style="text-decoration: underline; font-size: 16px;">LAMPIRAN GAMBAR</h3>
-                <div id="pvPhotos" class="photo-grid">
-                    <p style="color: #ccc; font-style: italic;">Gambar akan muncul di sini selepas dimuat naik.</p>
-                </div>
+                <div id="pvPhotos" class="photo-grid"></div>
             </div>
         </div>
     </div>
@@ -156,18 +114,11 @@
 
 <script>
     const stafList = ["Ling Lee Ann","Kong Zhe Fong","Fong Cui Fung","Cynthia Ting Xing Rou","Florence Wong Zhi Yu","Goh Su Ching","Lau Yun Hee","Roland Ting Hock Sing","Sharmaine Daphne Anak Slyvester Bakar","Stephen Hii Yii Nan","Tu Hiong Hiong","Unice Wong Wen Wen","Zafrullah Bin Mohd Sabri","Wong Chui Ling","Claudia Mo Ong Yi","Evy Law Jia Jia","Yuki Ng Jiajing","Wee Chun Yang","Efira Nazation Anak Kennedy","Faizah Binti Othman","Mariani Binti Haili","Stacy Wan"];
-
     const select = document.getElementById('staf');
     stafList.sort().forEach(s => select.add(new Option(s, s)));
 
-    function selectAllStaf() {
-        Array.from(select.options).forEach(opt => opt.selected = true);
-        updatePreview();
-    }
-    function clearStaf() {
-        Array.from(select.options).forEach(opt => opt.selected = false);
-        updatePreview();
-    }
+    function selectAllStaf() { Array.from(select.options).forEach(opt => opt.selected = true); updatePreview(); }
+    function clearStaf() { Array.from(select.options).forEach(opt => opt.selected = false); updatePreview(); }
 
     function updatePreview() {
         document.getElementById('pvTarikh').innerText = document.getElementById('tarikh').value || '-';
@@ -181,34 +132,34 @@
         document.getElementById('pvGPKKoku').innerText = document.getElementById('gpk_koku').value || '-';
         document.getElementById('pvStafLain').innerText = document.getElementById('staf_lain').value || '-';
         document.getElementById('pvDisediakan').innerText = document.getElementById('disediakan').value || '-';
-
-        const selected = Array.from(select.selectedOptions).map(o => o.value);
-        document.getElementById('pvStaf').innerText = selected.length ? selected.join(", ") : "-";
+        const sel = Array.from(select.selectedOptions).map(o => o.value);
+        document.getElementById('pvStaf').innerText = sel.length ? sel.join(", ") : "-";
     }
 
     document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', updatePreview));
 
     document.getElementById('inputPhotos').addEventListener('change', async function(e) {
         const container = document.getElementById('pvPhotos');
-        container.innerHTML = '';
+        container.innerHTML = 'Memproses gambar...';
         const files = Array.from(e.target.files);
+        let html = '';
 
         for (let i = 0; i < files.length; i++) {
-            const reader = new FileReader();
-            await new Promise(resolve => {
-                reader.onload = (ev) => {
-                    const div = document.createElement('div');
-                    div.className = 'img-wrapper';
-                    div.innerHTML = `<img src="${ev.target.result}"><p style="font-size:11px; margin:5px 0;">Gambar ${i+1}</p>`;
-                    container.appendChild(div);
-                    resolve();
-                };
+            const dataUrl = await new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = (ev) => resolve(ev.target.result);
                 reader.readAsDataURL(files[i]);
             });
+            html += `<div class="img-wrapper"><img src="${dataUrl}"><p style="font-size:11px; margin:5px 0;">Gambar ${i+1}</p></div>`;
         }
+        container.innerHTML = html;
     });
 
     async function generatePDF() {
+        const btn = document.getElementById('btnJana');
+        btn.innerText = "Sila tunggu...";
+        btn.disabled = true;
+        
         updatePreview();
         const element = document.getElementById('pdf-content');
         const tarikhVal = document.getElementById('tarikh').value || 'Laporan';
@@ -217,13 +168,23 @@
             margin: 0,
             filename: `Laporan Perhimpunan Sekolah ${tarikhVal}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
+            html2canvas: { 
+                scale: 2, 
+                useCORS: true, 
+                windowWidth: 1200, // Penting: Supaya telefon tidak potong tepi
+                scrollY: 0,
+                scrollX: 0
+            },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        await html2pdf().set(opt).from(element).save();
+        try {
+            await html2pdf().set(opt).from(element).save();
+        } finally {
+            btn.innerText = "JANA PDF";
+            btn.disabled = false;
+        }
     }
-
     window.onload = updatePreview;
 </script>
 </body>
