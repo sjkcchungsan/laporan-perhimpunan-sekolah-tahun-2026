@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<title>Laporan Perhimpunan Sekolah</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+body { font-family: Arial, sans-serif; margin: 20px; }
+.container { display: flex; gap: 20px; }
+.form-area { width: 45%; }
+.preview-area { width: 50%; border: 1px solid #ccc; padding: 10px; overflow: auto; height: 90vh; background: #fff; }
+input, select, textarea, button { width: 100%; margin-bottom: 10px; padding: 5px; box-sizing: border-box; }
+textarea { resize: vertical; min-height: 40px; }
+.gray-placeholder::placeholder { color: gray; }
+.logo-preview { max-width: 150px; margin-bottom: 10px; display:block; }
+.photo-preview { display: flex; flex-wrap: wrap; gap: 5px; margin-top:10px; }
+.photo-preview img { max-width: 100px; border: 1px solid #ccc; padding: 2px; }
+.pdf-section { padding: 10px; }
+.pdf-section h2 { text-align: center; margin: 10px 0; text-decoration: underline; }
+.pdf-section table { width: 100%; border-collapse: collapse; margin-top:10px; }
+.pdf-section table, .pdf-section th, .pdf-section td { border: 1px solid black; }
+.pdf-section th, .pdf-section td { padding: 5px; text-align: left; }
+.tiada { color: gray; font-style: italic; }
+</style>
+</head>
+<body>
+
+<h1>Laporan Perhimpunan Sekolah</h1>
+<div class="container">
+
+<!-- 左侧表格 -->
+<div class="form-area">
+  <label>Tarikh</label>
+  <input type="text" id="tarikh" class="gray-placeholder" placeholder="Contoh: 2 Januari 2026">
+
+  <label>Hari</label>
+  <input type="text" id="hari" class="gray-placeholder" placeholder="Contoh: Isnin">
+
+  <label>Masa mula</label>
+  <input type="text" id="masa" class="gray-placeholder" placeholder="Contoh: 0940">
+
+  <label>Senarai staf yang hadir</label>
+  <select id="staf" multiple size="6"></select>
+  <button type="button" onclick="selectAllStaf()">Pilih Semua</button>
+
+  <label>Tema sivik dan kewarganegaraan dalam perhimpunan</label>
+  <input type="text" id="tema" placeholder="Contoh: Kasih sayang / Hormat-menghormati / Bertanggungjawab / Kegembiraan">
+
+  <label>Nama pengacara (murid/guru)</label>
+  <input type="text" id="pengacara">
+
+  <label>Ucapan Guru Besar</label>
+  <textarea id="gb"></textarea>
+
+  <label>Ucapan GPK Pentadbiran</label>
+  <textarea id="gpk_admin"></textarea>
+
+  <label>Ucapan GPK HEM</label>
+  <textarea id="gpk_hem"></textarea>
+
+  <label>Ucapan GPK Kokurikulum</label>
+  <textarea id="gpk_kokurikulum"></textarea>
+
+  <label>Ucapan Staf lain</label>
+  <textarea id="staf_lain"></textarea>
+
+  <label>Perhimpunan ditangguhkan pada</label>
+  <input type="text" id="tangguh" placeholder="Contoh: 1010">
+
+  <label>Disediakan oleh</label>
+  <input type="text" id="disediakan">
+
+  <label style="font-weight:bold;">Gambar Perhimpunan (Maks 10)</label>
+  <input type="file" id="photosUpload" accept="image/*" multiple>
+</div>
+
+<!-- 右侧预览 -->
+<div class="preview-area" id="preview">
+  <div class="pdf-section">
+    <!-- 固定 Logo -->
+    <img id="logoPreview" class="logo-preview" src="logo.png" alt="Logo Sekolah">
+
+    <h2>Laporan Perhimpunan Sekolah</h2>
+
+    <table>
+      <tr><th>Tarikh</th><td id="pvTarikh"></td></tr>
+      <tr><th>Hari</th><td id="pvHari"></td></tr>
+      <tr><th>Masa mula</th><td id="pvMasa"></td></tr>
+      <tr><th>Senarai staf yang hadir</th><td id="pvStaf"></td></tr>
+      <tr><th>Tema</th><td id="pvTema"></td></tr>
+      <tr><th>Nama pengacara</th><td id="pvPengacara"></td></tr>
+      <tr><th>Ucapan Guru Besar</th><td id="pvGB"></td></tr>
+      <tr><th>Ucapan GPK Pentadbiran</th><td id="pvGPKAdmin"></td></tr>
+      <tr><th>Ucapan GPK HEM</th><td id="pvGPKHEM"></td></tr>
+      <tr><th>Ucapan GPK Kokurikulum</th><td id="pvGPKKoku"></td></tr>
+      <tr><th>Ucapan Staf lain</th><td id="pvStafLain"></td></tr>
+      <tr><th>Perhimpunan ditangguhkan pada</th><td id="pvTangguh"></td></tr>
+      <tr><th>Disediakan oleh</th><td id="pvDisediakan"></td></tr>
+      <tr><th>Disemak dan disahkan oleh</th><td>Ling Lee Ann, Guru Besar SJK(C) Chung San</td></tr>
+    </table>
+
+    <!-- 照片固定在 PDF 最下面 -->
+    <div class="photo-preview" id="photoPreviewPDF"></div>
+
+    <button onclick="generatePDF()">Jana PDF</button>
+  </div>
+</div>
+
+<script>
+// 老师名单数组（修改这里就可以增减老师）
+function loadStafList(){
+  const stafList = ["Lee Ann","Tan Hui","Chong Wei","Siti Aminah","Ahmad Faiz","Tiada"];
+  const stafSelect = document.getElementById('staf');
+  stafList.forEach(name => {
+    const option = document.createElement('option');
+    option.value = name;
+    option.textContent = name;
+    stafSelect.appendChild(option);
+  });
+}
+
+// 一键选择全部
+function selectAllStaf(){
+  const stafSelect = document.getElementById('staf');
+  Array.from(stafSelect.options).forEach(option => {
+    if(option.value !== "Tiada") option.selected = true;
+  });
+}
+
+// 更新预览
+function updatePreview() {
+  document.getElementById('pvTarikh').innerText = document.getElementById('tarikh').value || 'Tiada';
+  document.getElementById('pvHari').innerText = document.getElementById('hari').value || 'Tiada';
+  document.getElementById('pvMasa').innerText = document.getElementById('masa').value || 'Tiada';
+
+  const stafSelect = document.getElementById('staf');
+  const selected = Array.from(stafSelect.selectedOptions).map(opt => opt.value);
+  document.getElementById('pvStaf').innerText = selected.length ? selected.join(", ") : "Tiada";
+
+  document.getElementById('pvTema').innerText = document.getElementById('tema').value || 'Tiada';
+  document.getElementById('pvPengacara').innerText = document.getElementById('pengacara').value || 'Tiada';
+  document.getElementById('pvGB').innerText = document.getElementById('gb').value || 'Tiada';
+  document.getElementById('pvGPKAdmin').innerText = document.getElementById('gpk_admin').value || 'Tiada';
+  document.getElementById('pvGPKHEM').innerText = document.getElementById('gpk_hem').value || 'Tiada';
+  document.getElementById('pvGPKKoku').innerText = document.getElementById('gpk_kokurikulum').value || 'Tiada';
+  document.getElementById('pvStafLain').innerText = document.getElementById('staf_lain').value || 'Tiada';
+  document.getElementById('pvTangguh').innerText = document.getElementById('tangguh').value || 'Tiada';
+  document.getElementById('pvDisediakan').innerText = document.getElementById('disediakan').value || 'Tiada';
+
+  // 照片固定在 PDF 最下面
+  const files = document.getElementById('photosUpload').files;
+  const previewPDF = document.getElementById('photoPreviewPDF');
+  previewPDF.innerHTML = '';
+  Array.from(files).slice(0,10).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function(evt){
+      const img = document.createElement('img');
+      img.src = evt.target.result;
+      img.style.maxWidth = '100px';
+      img.style.margin = '3px';
+      img.style.border = '1px solid #ccc';
+      img.style.padding = '2px';
+      previewPDF.appendChild(img);
+    }
+    reader.readAsDataURL(file);
+  });
+}
+
+// 绑定事件
+document.querySelectorAll('input, textarea, select').forEach(el => {
+  el.addEventListener('input', updatePreview);
+});
+document.getElementById('photosUpload').addEventListener('change', updatePreview);
+
+window.onload = function(){
+  loadStafList();
+  updatePreview();
+}
+
+// 生成 PDF
+function generatePDF(){
+  const element = document.getElementById('preview');
+  const today = new Date();
+  const dateStr = today.toISOString().slice(0,10);
+  html2pdf().set({filename: `Laporan_Perhimpunan_${dateStr}.pdf`, html2canvas:{scale:2}}).from(element).save();
+}
+</script>
+
+</body>
+</html>
