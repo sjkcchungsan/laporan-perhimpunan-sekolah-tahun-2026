@@ -13,12 +13,12 @@ input, select, textarea, button { width: 100%; margin-bottom: 10px; padding: 5px
 textarea { resize: vertical; min-height: 40px; }
 .gray-placeholder::placeholder { color: gray; }
 .logo-preview { display: block; margin: 0 auto; max-width: 150px; }
-.pdf-section { padding: 10px; }
+.pdf-section { padding: 10px; max-width: 180mm; margin: 0 auto; } /* 内容居中 */
 .pdf-section h2 { text-align: center; margin: 10px 0; text-decoration: underline; }
 .pdf-section table { width: 100%; border-collapse: collapse; margin-top:10px; }
 .pdf-section table, .pdf-section th, .pdf-section td { border: 1px solid black; }
 .pdf-section th, .pdf-section td { padding: 5px; text-align: left; }
-.photo-preview-page { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; page-break-before: always; }
+.photo-preview-page { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; page-break-before: always; justify-content: center; }
 .photo-preview-page img { max-width: 100px; border: 1px solid #ccc; padding: 2px; }
 </style>
 </head>
@@ -108,7 +108,7 @@ textarea { resize: vertical; min-height: 40px; }
 </div>
 
 <script>
-// 老师名单数组（随时增减）
+// 老师名单数组
 function loadStafList(){
   const stafList = ["Lee Ann","Tan Hui","Chong Wei","Siti Aminah","Ahmad Faiz","Tiada"];
   const stafSelect = document.getElementById('staf');
@@ -139,7 +139,7 @@ function updatePreview() {
   document.getElementById('pvStaf').innerText = selected.length ? selected.join(", ") : "Tiada";
 
   document.getElementById('pvTema').innerText = document.getElementById('tema').value || 'Tiada';
-  document.getElementById('pvPengacara').innerText = document.getElementById('pengacara').value || 'Tiada';
+  document.getElementById('pvPengacara').innerText = document.getElementById('pvPengacara') || 'Tiada';
   document.getElementById('pvGB').innerText = document.getElementById('gb').value || 'Tiada';
   document.getElementById('pvGPKAdmin').innerText = document.getElementById('gpk_admin').value || 'Tiada';
   document.getElementById('pvGPKHEM').innerText = document.getElementById('gpk_hem').value || 'Tiada';
@@ -174,19 +174,24 @@ window.onload = function(){
   updatePreview();
 }
 
-// 生成 PDF (A4)
+// 生成 PDF (A4, 内容居中, 照片新页)
 function generatePDF(){
+  updatePreview(); // 确保最新内容
+
   const element = document.getElementById('preview');
   const today = new Date();
   const dateStr = today.toISOString().slice(0,10);
 
-  html2pdf().set({
-    margin: 10,
-    filename: `Laporan_Perhimpunan_${dateStr}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  }).from(element).save();
+  // 延迟确保照片渲染完成
+  setTimeout(() => {
+    html2pdf().set({
+      margin: 10,
+      filename: `Laporan_Perhimpunan_${dateStr}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, windowWidth: 2100 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }).from(element).save();
+  }, 500);
 }
 </script>
 
