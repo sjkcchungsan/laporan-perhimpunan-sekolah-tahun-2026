@@ -6,6 +6,7 @@
     <title>Sistem Laporan SJKC Chung San</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
+        /* 基础布局 */
         body { font-family: Arial, sans-serif; background-color: #f0f2f5; margin: 0; padding: 10px; }
         .container { display: flex; flex-direction: column; gap: 20px; }
         
@@ -15,6 +16,7 @@
             .preview-area { width: 65%; }
         }
 
+        /* 表单样式 */
         .form-area { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         label { font-weight: bold; display: block; margin-top: 15px; font-size: 0.9rem; }
         input, textarea, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
@@ -22,9 +24,10 @@
         .btn-blue { background-color: #3498db; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; flex: 1; font-weight: bold; margin-top: 5px; }
         .btn-green { background-color: #27ae60; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; cursor: pointer; font-size: 1.1rem; font-weight: bold; margin-top: 25px; }
 
+        /* 预览区样式 */
         .preview-area { background: #555; padding: 20px; overflow-x: auto; display: flex; justify-content: center; }
 
-        /* KANDUNGAN PDF - SAIZ A4 TETAP */
+        /* PDF 内容区 - A4 标准尺寸 */
         #pdf-content { 
             background: white; width: 210mm; min-height: 297mm; padding: 10mm 15mm; 
             box-sizing: border-box; margin: 0; flex-shrink: 0; color: black;
@@ -38,6 +41,7 @@
         th, td { border: 1px solid black; padding: 8px; font-size: 13px; word-wrap: break-word; vertical-align: top; }
         th { background-color: #f2f2f2; width: 35%; text-align: left; }
 
+        /* 照片页样式 */
         .photo-page { page-break-before: always; text-align: center; padding-top: 10mm; }
         .photo-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 15px; }
         .img-wrapper { width: 45%; border: 1px solid #000; padding: 5px; background: #fff; box-sizing: border-box; }
@@ -50,44 +54,51 @@
     <div class="form-area">
         <h3 style="margin:0; color:#2c3e50;">Input Laporan</h3>
         
-        <label>Tarikh</label>
+        <label>Tarikh (日期)</label>
         <input type="text" id="tarikh" placeholder="12 Januari 2026">
         
-        <label>Hari</label>
+        <label>Hari (星期)</label>
         <select id="hari">
             <option value="" disabled selected>Pilih Hari</option>
-            <option value="Isnin">Isnin</option><option value="Selasa">Selasa</option><option value="Rabu">Rabu</option><option value="Khamis">Khamis</option><option value="Jumaat">Jumaat</option>
+            <option value="Isnin">Isnin</option>
+            <option value="Selasa">Selasa</option>
+            <option value="Rabu">Rabu</option>
+            <option value="Khamis">Khamis</option>
+            <option value="Jumaat">Jumaat</option>
         </select>
         
-        <label>Masa Mula</label>
+        <label>Masa Mula (开始时间)</label>
         <input type="text" id="masa" placeholder="0940">
 
-        <label>Senarai Staf Hadir (Multi-select)</label>
+        <label>Senarai Staf Hadir (出席老师 - 可多选)</label>
         <select id="staf" multiple size="8" style="height: 180px;"></select>
-        <button type="button" class="btn-blue" onclick="selectAllStaf()">Pilih Semua Staf</button>
+        <button type="button" class="btn-blue" onclick="selectAllStaf()">Pilih Semua Staf (全选)</button>
 
-        <label>Tema Sivik</label>
+        <label>Tema Sivik (公民教育主题)</label>
         <select id="tema">
             <option value="" disabled selected>Pilih Tema</option>
-            <option value="Kasih Sayang">Kasih Sayang</option><option value="Hormat-menghormati">Hormat-menghormati</option><option value="Bertanggungjawab">Bertanggungjawab</option><option value="Kegembiraan">Kegembiraan</option>
+            <option value="Kasih Sayang">Kasih Sayang</option>
+            <option value="Hormat-menghormati">Hormat-menghormati</option>
+            <option value="Bertanggungjawab">Bertanggungjawab</option>
+            <option value="Kegembiraan">Kegembiraan</option>
         </select>
         
-        <label>Nama Pengacara</label>
+        <label>Nama Pengacara (司仪姓名)</label>
         <input type="text" id="pengacara" placeholder="Nama Murid / Guru">
         
-        <label>Ucapan Guru Besar</label><textarea id="gb"></textarea>
-        <label>Ucapan GPK Pentadbiran</label><textarea id="gpk_admin"></textarea>
-        <label>Ucapan GPK HEM</label><textarea id="gpk_hem"></textarea>
-        <label>Ucapan GPK Kokurikulum</label><textarea id="gpk_koku"></textarea>
-        <label>Ucapan Staf Lain</label><textarea id="staf_lain"></textarea>
+        <label>Ucapan Guru Besar (校长致词)</label><textarea id="gb"></textarea>
+        <label>Ucapan GPK Pentadbiran (副校长1致词)</label><textarea id="gpk_admin"></textarea>
+        <label>Ucapan GPK HEM (副校长2致词)</label><textarea id="gpk_hem"></textarea>
+        <label>Ucapan GPK Kokurikulum (副校长3致词)</label><textarea id="gpk_koku"></textarea>
+        <label>Ucapan Staf Lain (其他致词)</label><textarea id="staf_lain"></textarea>
         
-        <label>Disediakan Oleh</label>
+        <label>Disediakan Oleh (准备人)</label>
         <select id="disediakan"><option value="" disabled selected>Pilih Nama</option></select>
         
-        <label>Muat Naik Gambar</label>
+        <label>Muat Naik Gambar (上传照片)</label>
         <input type="file" id="inputPhotos" accept="image/*" multiple>
 
-        <button id="btnJana" class="btn-green" onclick="generatePDF()">MUAT TURUN PDF</button>
+        <button id="btnJana" class="btn-green" onclick="generatePDF()">JANA & DOWNLOAD PDF</button>
     </div>
 
     <div class="preview-area">
@@ -118,8 +129,10 @@
 </div>
 
 <script>
+    // 老师名单
     const listNama = ["Ling Lee Ann","Kong Zhe Fong","Fong Cui Fung","Cynthia Ting Xing Rou","Florence Wong Zhi Yu","Goh Su Ching","Lau Yun Hee","Roland Ting Hock Sing","Sharmaine Daphne Anak Slyvester Bakar","Stephen Hii Yii Nan","Tu Hiong Hiong","Unice Wong Wen Wen","Zafrullah Bin Mohd Sabri","Wong Chui Ling","Claudia Mo Ong Yi","Evy Law Jia Jia","Yuki Ng Jiajing","Wee Chun Yang","Efira Nazation Anak Kennedy","Faizah Binti Othman","Mariani Binti Haili","Stacy Wan"].sort();
 
+    // 初始化下拉框
     const selectStaf = document.getElementById('staf');
     const selectDisediakan = document.getElementById('disediakan');
     listNama.forEach(nama => {
@@ -129,20 +142,27 @@
 
     function selectAllStaf() { Array.from(selectStaf.options).forEach(o => o.selected = true); updatePreview(); }
 
+    // 更新预览
     function updatePreview() {
-        ['Tarikh','Hari','Masa','Tema','Pengacara','GB','GPKAdmin','GPKHEM','GPKKoku','StafLain','Disediakan'].forEach(id => {
-            const val = document.getElementById(id.toLowerCase() === 'gpkadmin' ? 'gpk_admin' : id.toLowerCase() === 'gpkhem' ? 'gpk_hem' : id.toLowerCase() === 'gpkkoku' ? 'gpk_koku' : id.toLowerCase() === 'staflain' ? 'staf_lain' : id.toLowerCase()).value;
-            document.getElementById('pv' + id).innerText = val || '-';
-        });
+        const fields = {
+            'pvTarikh': 'tarikh', 'pvHari': 'hari', 'pvMasa': 'masa', 'pvTema': 'tema',
+            'pvPengacara': 'pengacara', 'pvGB': 'gb', 'pvGPKAdmin': 'gpk_admin',
+            'pvGPKHEM': 'gpk_hem', 'pvGPKKoku': 'gpk_koku', 'pvStafLain': 'staf_lain',
+            'pvDisediakan': 'disediakan'
+        };
+        for (let pvId in fields) {
+            document.getElementById(pvId).innerText = document.getElementById(fields[pvId]).value || '-';
+        }
         const sel = Array.from(selectStaf.selectedOptions).map(o => o.value);
         document.getElementById('pvStaf').innerText = sel.length ? sel.join(", ") : "-";
     }
 
     document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', updatePreview));
 
+    // 处理图片上传
     document.getElementById('inputPhotos').addEventListener('change', async function(e) {
         const container = document.getElementById('pvPhotos');
-        container.innerHTML = 'Memproses...';
+        container.innerHTML = 'Processing images...';
         const files = Array.from(e.target.files);
         let html = '';
         for (let file of files) {
@@ -156,30 +176,34 @@
         container.innerHTML = html;
     });
 
+    // 生成 PDF 核心代码
     async function generatePDF() {
         const btn = document.getElementById('btnJana');
-        btn.innerText = "Menjana..."; btn.disabled = true;
+        btn.innerText = "Generating PDF..."; btn.disabled = true;
         
         const element = document.getElementById('pdf-content');
         const isMobile = /Android|iPhone/i.test(navigator.userAgent);
+        const tarikhStr = document.getElementById('tarikh').value || 'Report';
 
         const opt = {
             margin: 0,
-            filename: `Laporan_${document.getElementById('tarikh').value || 'Sekolah'}.pdf`,
+            filename: `Laporan_Perhimpunan_${tarikhStr}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { 
                 scale: 2, 
                 useCORS: true, 
-                width: 794,
-                windowWidth: isMobile ? 794 : element.clientWidth, // Sini kuncinya: Desktop guna lebar sebenar
-                scrollY: -window.scrollY 
+                width: 794, // 强制 A4 宽度 (px)
+                windowWidth: isMobile ? 794 : element.clientWidth, // 关键：电脑端使用实际可见宽度，防止空白
+                scrollY: -window.scrollY // 修复滚动导致的偏移
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
         try {
-            window.scrollTo(0,0);
+            window.scrollTo(0,0); // 生成前回到顶部
             await html2pdf().set(opt).from(element).save();
+        } catch (err) {
+            alert("Error: " + err);
         } finally {
             btn.innerText = "MUAT TURUN PDF"; btn.disabled = false;
         }
