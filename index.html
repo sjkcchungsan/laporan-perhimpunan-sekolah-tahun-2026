@@ -19,7 +19,7 @@ textarea { resize: vertical; min-height: 40px; }
 .pdf-section table, .pdf-section th, .pdf-section td { border: 1px solid black; }
 .pdf-section th, .pdf-section td { padding: 5px; text-align: left; }
 .photo-preview-page { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; page-break-before: always; justify-content: center; }
-.photo-preview-page img { max-width: 100px; border: 1px solid #ccc; padding: 2px; }
+.photo-preview-page img { max-width: 48%; border: 1px solid #ccc; padding: 2px; margin-bottom:5px; }
 </style>
 </head>
 <body>
@@ -139,7 +139,7 @@ function updatePreview() {
   document.getElementById('pvStaf').innerText = selected.length ? selected.join(", ") : "Tiada";
 
   document.getElementById('pvTema').innerText = document.getElementById('tema').value || 'Tiada';
-  document.getElementById('pvPengacara').innerText = document.getElementById('pvPengacara') || 'Tiada';
+  document.getElementById('pvPengacara').innerText = document.getElementById('pengacara').value || 'Tiada';
   document.getElementById('pvGB').innerText = document.getElementById('gb').value || 'Tiada';
   document.getElementById('pvGPKAdmin').innerText = document.getElementById('gpk_admin').value || 'Tiada';
   document.getElementById('pvGPKHEM').innerText = document.getElementById('gpk_hem').value || 'Tiada';
@@ -174,24 +174,41 @@ window.onload = function(){
   updatePreview();
 }
 
-// 生成 PDF (A4, 内容居中, 照片新页)
+// 生成 PDF (确保图片加载完成，A4, 内容居中)
 function generatePDF(){
-  updatePreview(); // 确保最新内容
+  updatePreview();
+  const previewPDF = document.getElementById('photoPreviewPDF');
+  const images = previewPDF.querySelectorAll('img');
+  let loaded = 0;
+  if(images.length === 0){
+    createPDF();
+  } else {
+    images.forEach(img => {
+      if(img.complete){
+        loaded++;
+        if(loaded === images.length) createPDF();
+      } else {
+        img.onload = () => {
+          loaded++;
+          if(loaded === images.length) createPDF();
+        }
+      }
+    });
+  }
 
-  const element = document.getElementById('preview');
-  const today = new Date();
-  const dateStr = today.toISOString().slice(0,10);
+  function createPDF(){
+    const element = document.getElementById('preview');
+    const today = new Date();
+    const dateStr = today.toISOString().slice(0,10);
 
-  // 延迟确保照片渲染完成
-  setTimeout(() => {
     html2pdf().set({
       margin: 10,
       filename: `Laporan_Perhimpunan_${dateStr}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, windowWidth: 2100 },
+      html2canvas: { scale: 2, useCORS: true, windowWidth: 1240 },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     }).from(element).save();
-  }, 500);
+  }
 }
 </script>
 
