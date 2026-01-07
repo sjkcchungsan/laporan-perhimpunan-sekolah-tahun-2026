@@ -1,50 +1,43 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Perhimpunan Sekolah</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 10px; background-color: #f4f7f6; }
-        h1 { text-align: center; font-size: 1.5rem; color: #2c3e50; }
-        
-        /* Layout untuk Telefon & Desktop */
-        .container { display: flex; flex-direction: column; gap: 20px; }
-        @media (min-width: 992px) {
-            .container { flex-direction: row; align-items: flex-start; }
-            .form-area { width: 40%; position: sticky; top: 10px; }
-            .preview-area { width: 60%; }
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laporan Perhimpunan Sekolah</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+body { font-family: Arial, sans-serif; margin: 10px; background: #f4f7f6; }
+h1 { text-align:center; font-size:1.5rem; color:#2c3e50; }
 
-        .form-area { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .preview-area { background: white; padding: 10px; border: 1px solid #ddd; overflow-x: auto; }
+.container { display:flex; flex-direction:column; gap:20px; }
+@media (min-width:992px){ .container{ flex-direction:row; align-items:flex-start; } .form-area{ width:40%; position:sticky; top:10px; } .preview-area{ width:60%; } }
 
-        label { font-weight: bold; display: block; margin-top: 10px; font-size: 0.9rem; }
-        input, textarea, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 1rem; }
-        
-        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
-        button { flex: 1; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-select { background-color: #3498db; color: white; }
-        .btn-pdf { background-color: #27ae60; color: white; margin-top: 20px; font-size: 1.1rem; }
-        button:active { transform: scale(0.98); }
+.form-area { background:white; padding:15px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
+.preview-area { background:white; padding:10px; border:1px solid #ddd; overflow-x:auto; }
 
-        /* Gaya Kandungan PDF */
-        #pdf-render { width: 100%; background: white; color: black; }
-        .logo-box { text-align: center; margin-bottom: 10px; }
-        .logo-box img { max-width: 100px; height: auto; }
-        h2 { text-align: center; text-decoration: underline; font-size: 16px; margin: 10px 0; }
-        
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-top: 10px; }
-        th, td { border: 1px solid black; padding: 8px; font-size: 12px; word-wrap: break-word; vertical-align: top; }
-        th { background-color: #eee; width: 35%; text-align: left; }
+label{ font-weight:bold; display:block; margin-top:10px; font-size:0.9rem; }
+input, textarea { width:100%; padding:10px; margin-top:5px; border:1px solid #ccc; border-radius:5px; box-sizing:border-box; font-size:1rem; }
 
-        /* Grid Gambar */
-        .photo-grid { display: block; width: 100%; margin-top: 15px; }
-        .photo-page-break { page-break-before: always; margin-top: 20px; }
-        .img-wrapper { display: inline-block; width: 48%; margin: 1%; text-align: center; }
-        .img-wrapper img { width: 100%; height: 180px; object-fit: contain; border: 1px solid #ccc; }
-    </style>
+.btn-pdf { background-color:#27ae60; color:white; margin-top:20px; font-size:1.1rem; padding:12px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; width:100%; }
+button:active { transform:scale(0.98); }
+
+#pdf-render { width:100%; background:white; color:black; }
+.logo-box { text-align:center; margin-bottom:10px; }
+.logo-box img { max-width:100px; height:auto; }
+h2 { text-align:center; text-decoration:underline; font-size:16px; margin:10px 0; }
+
+table { width:100%; border-collapse:collapse; table-layout:fixed; margin-top:10px; }
+th, td { border:1px solid black; padding:8px; font-size:12px; word-wrap:break-word; vertical-align:top; }
+th { background-color:#eee; width:35%; text-align:left; }
+
+.photo-grid { display:block; width:100%; margin-top:15px; }
+.photo-page-break { page-break-before:always; margin-top:20px; }
+.img-wrapper { display:inline-block; width:48%; margin:1%; text-align:center; }
+.img-wrapper img { width:100%; height:180px; object-fit:contain; border:1px solid #ccc; }
+.img-wrapper p { font-size:10px; margin:2px 0 0 0; }
+.staf-item { padding:5px 8px; margin:2px 0; border:1px solid #ccc; border-radius:4px; cursor:pointer; }
+.staf-item.selected { background:#3498db; color:white; border-color:#2980b9; }
+</style>
 </head>
 <body>
 
@@ -58,14 +51,11 @@
             <input type="text" id="hari" placeholder="Isnin">
         </div>
 
-        <label>Masa (Mula - Tamat)</label>
+        <label>Masa</label>
         <input type="text" id="masa" placeholder="07:30 - 08:00">
 
         <label>Senarai Staf Hadir</label>
-        <select id="staf" multiple size="10"></select>
-        <div class="btn-group">
-            <button type="button" class="btn-select" onclick="toggleSelectAll()">Pilih Semua Staf</button>
-        </div>
+        <div id="stafList"></div>
 
         <label>Tema Sivik</label>
         <input type="text" id="tema">
@@ -76,7 +66,7 @@
         <label>Ucapan Guru Besar</label>
         <textarea id="gb"></textarea>
 
-        <label>Ucapan Lain-lain (GPK/Staf)</label>
+        <label>Ucapan Lain-lain (GPK / Staf)</label>
         <textarea id="lain"></textarea>
 
         <label>Disediakan Oleh</label>
@@ -90,9 +80,7 @@
 
     <div class="preview-area">
         <div id="pdf-render">
-            <div class="logo-box">
-                <img src="logo.png" alt="Logo Sekolah">
-            </div>
+            <div class="logo-box"><img src="logo.png" alt="Logo Sekolah"></div>
             <h2>LAPORAN PERHIMPUNAN MINGGUAN</h2>
             <table>
                 <tr><th>Tarikh / Hari</th><td id="pvTarikhHari"></td></tr>
@@ -111,84 +99,64 @@
 </div>
 
 <script>
-    const listGuru = ["Ling Lee Ann","Kong Zhe Fong","Fong Cui Fung","Cynthia Ting Xing Rou","Florence Wong Zhi Yu","Goh Su Ching","Lau Yun Hee","Roland Ting Hock Sing","Sharmaine Daphne Anak Slyvester Bakar","Stephen Hii Yii Nan","Tu Hiong Hiong","Unice Wong Wen Wen","Zafrullah Bin Mohd Sabri","Wong Chui Ling","Claudia Mo Ong Yi","Evy Law Jia Jia","Yuki Ng Jiajing","Wee Chun Yang","Efira Nazation Anak Kennedy","Faizah Binti Othman","Mariani Binti Haili","Stacy Wan"];
+const guruList = ["Ling Lee Ann","Kong Zhe Fong","Fong Cui Fung","Cynthia Ting Xing Rou","Florence Wong Zhi Yu","Goh Su Ching","Lau Yun Hee","Roland Ting Hock Sing","Sharmaine Daphne Anak Slyvester Bakar","Stephen Hii Yii Nan","Tu Hiong Hiong","Unice Wong Wen Wen","Zafrullah Bin Mohd Sabri","Wong Chui Ling","Claudia Mo Ong Yi","Evy Law Jia Jia","Yuki Ng Jiajing","Wee Chun Yang","Efira Nazation Anak Kennedy","Faizah Binti Othman","Mariani Binti Haili","Stacy Wan"];
 
-    const selectStaf = document.getElementById('staf');
-    listGuru.sort().forEach(nama => {
-        let opt = new Option(nama, nama);
-        selectStaf.add(opt);
+const stafListDiv = document.getElementById('stafList');
+guruList.sort().forEach(nama=>{
+    const div = document.createElement('div');
+    div.className = 'staf-item';
+    div.innerText = nama;
+    div.addEventListener('click', ()=>{ 
+        div.classList.toggle('selected'); 
+        updatePreview(); 
     });
+    stafListDiv.appendChild(div);
+});
 
-    let allSelected = false;
-    function toggleSelectAll() {
-        allSelected = !allSelected;
-        Array.from(selectStaf.options).forEach(opt => opt.selected = allSelected);
-        updateText();
+function updatePreview(){
+    document.getElementById('pvTarikhHari').innerText = `${document.getElementById('tarikh').value} (${document.getElementById('hari').value})`;
+    document.getElementById('pvMasa').innerText = document.getElementById('masa').value;
+    document.getElementById('pvTema').innerText = document.getElementById('tema').value;
+    document.getElementById('pvPengacara').innerText = document.getElementById('pengacara').value;
+    document.getElementById('pvGB').innerText = document.getElementById('gb').value;
+    document.getElementById('pvLain').innerText = document.getElementById('lain').value;
+    document.getElementById('pvDisediakan').innerText = document.getElementById('disediakan').value;
+
+    const selected = Array.from(document.querySelectorAll('.staf-item.selected')).map(d=>d.innerText);
+    document.getElementById('pvStaf').innerText = selected.length ? selected.join(", ") : "-";
+}
+
+// Muat naik gambar dan preview
+document.getElementById('photoFiles').addEventListener('change', async function(e){
+    const pvPhotos = document.getElementById('pvPhotos');
+    pvPhotos.innerHTML='';
+    const files = Array.from(e.target.files).slice(0,10);
+    for(let i=0;i<files.length;i++){
+        const reader = new FileReader();
+        const promise = new Promise(resolve=>{
+            reader.onload = ev=>{
+                const wrapper = document.createElement('div');
+                wrapper.className='img-wrapper';
+                if(i>0 && i%4===0) wrapper.classList.add('photo-page-break');
+                wrapper.innerHTML=`<img src="${ev.target.result}"><p>Gambar ${i+1}</p>`;
+                pvPhotos.appendChild(wrapper);
+                resolve();
+            };
+        });
+        reader.readAsDataURL(files[i]);
+        await promise;
     }
+});
 
-    function updateText() {
-        document.getElementById('pvTarikhHari').innerText = `${document.getElementById('tarikh').value} (${document.getElementById('hari').value})`;
-        document.getElementById('pvMasa').innerText = document.getElementById('masa').value;
-        document.getElementById('pvTema').innerText = document.getElementById('tema').value;
-        document.getElementById('pvPengacara').innerText = document.getElementById('pengacara').value;
-        document.getElementById('pvGB').innerText = document.getElementById('gb').value;
-        document.getElementById('pvLain').innerText = document.getElementById('lain').value;
-        document.getElementById('pvDisediakan').innerText = document.getElementById('disediakan').value;
+document.querySelectorAll('input, textarea').forEach(el=>el.addEventListener('input', updatePreview));
 
-        const dipilih = Array.from(selectStaf.selectedOptions).map(o => o.value);
-        document.getElementById('pvStaf').innerText = dipilih.length > 0 ? dipilih.join(", ") : "-";
-    }
-
-    // Fungsi muat imej yang lebih stabil
-    document.getElementById('photoFiles').addEventListener('change', async function(e) {
-        const pvPhotos = document.getElementById('pvPhotos');
-        pvPhotos.innerHTML = '';
-        const files = Array.from(e.target.files);
-
-        for (let i = 0; i < files.length; i++) {
-            const reader = new FileReader();
-            const promise = new Promise(resolve => {
-                reader.onload = (event) => {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'img-wrapper';
-                    if (i > 0 && i % 4 === 0) wrapper.classList.add('photo-page-break');
-                    wrapper.innerHTML = `<img src="${event.target.result}"><p style="font-size:10px">Gambar ${i+1}</p>`;
-                    pvPhotos.appendChild(wrapper);
-                    resolve();
-                };
-            });
-            reader.readAsDataURL(files[i]);
-            await promise;
-        }
-    });
-
-    document.querySelectorAll('input, textarea, select').forEach(el => {
-        el.addEventListener('input', updateText);
-    });
-
-    async function downloadPDF() {
-        updateText();
-        const element = document.getElementById('pdf-render');
-        
-        // Tetapan khas untuk elakkan kandungan terpotong di kanan
-        const opt = {
-            margin: 10,
-            filename: `Laporan_${document.getElementById('tarikh').value || 'Sekolah'}.pdf`,
-            image: { type: 'jpeg', quality: 0.95 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true, 
-                width: 794 // Paksa lebar A4 (standard pixels)
-            },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        try {
-            await html2pdf().set(opt).from(element).save();
-        } catch (err) {
-            alert("Ralat menjana PDF. Sila pastikan gambar tidak terlalu besar.");
-        }
-    }
+async function downloadPDF(){
+    updatePreview();
+    const element=document.getElementById('pdf-render');
+    const opt={margin: [25.4,31.8,25.4,31.8], filename:`Laporan_${document.getElementById('tarikh').value||'Sekolah'}.pdf`, image:{type:'jpeg',quality:0.95}, html2canvas:{scale:2,useCORS:true}, jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}};
+    try{ await html2pdf().set(opt).from(element).save(); }
+    catch(e){ alert("Ralat menjana PDF. Sila pastikan gambar tidak terlalu besar."); }
+}
 </script>
 
 </body>
