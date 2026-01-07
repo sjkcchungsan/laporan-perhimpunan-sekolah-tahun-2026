@@ -6,7 +6,7 @@
     <title>Sistem Laporan Perhimpunan SJKC Chung San</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f0f2f5; padding: 20px; }
+        body { font-family: Arial, sans-serif; background-color: #f0f2f5; padding: 20px; margin: 0; }
         .container { display: flex; flex-direction: column; gap: 20px; }
         
         @media (min-width: 992px) {
@@ -29,41 +29,43 @@
             font-size: 1rem;
         }
 
-        /* Gaya Placeholder Kelabu */
+        /* Placeholder Kelabu */
         ::placeholder { color: #a9a9a9; opacity: 1; }
-        :-ms-input-placeholder { color: #a9a9a9; }
-        ::-ms-input-placeholder { color: #a9a9a9; }
+
+        /* Staf Multi-select hint */
+        .hint { font-size: 0.75rem; color: #666; font-weight: normal; margin-bottom: 5px; }
 
         .btn-group { display: flex; gap: 10px; margin-top: 10px; }
         .btn-blue { background-color: #3498db; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; flex: 1; font-weight: bold; }
         .btn-green { background-color: #27ae60; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; cursor: pointer; font-size: 1.1rem; font-weight: bold; margin-top: 25px; }
 
-        /* Gaya PDF (Standard A4 & Center) */
-        .preview-area { background: #ddd; padding: 20px; display: flex; justify-content: center; }
+        /* Gaya PDF (Top Aligned & Horizontally Centered) */
+        .preview-area { background: #ddd; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
         
         #pdf-content { 
             background: white; 
-            width: 210mm; /* Lebar A4 */
+            width: 210mm; 
             min-height: 297mm; 
-            padding: 15mm; 
+            padding: 10mm 15mm; /* Padding atas dikurangkan supaya rapat ke top */
             box-sizing: border-box; 
-            margin: 0 auto; /* Center secara horizontal */
+            margin: 0 auto; 
+            display: block;
         }
 
-        .logo-box { text-align: center; margin-bottom: 10px; }
-        .logo-box img { max-width: 110px; }
+        .logo-box { text-align: center; margin-bottom: 5px; }
+        .logo-box img { max-width: 100px; }
         
-        h2 { text-align: center; text-decoration: underline; font-size: 18px; margin: 10px 0 20px 0; text-transform: uppercase; }
+        h2 { text-align: center; text-decoration: underline; font-size: 18px; margin: 0 0 15px 0; text-transform: uppercase; }
         
-        /* Jadual seperti Excel */
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        th, td { border: 1px solid black; padding: 10px; font-size: 13px; word-wrap: break-word; vertical-align: top; }
-        th { background-color: #f2f2f2; width: 30%; text-align: left; font-weight: bold; }
+        /* Jadual Excel Style */
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 0 auto; }
+        th, td { border: 1px solid black; padding: 8px 10px; font-size: 13px; word-wrap: break-word; vertical-align: top; }
+        th { background-color: #f2f2f2; width: 30%; text-align: left; }
 
-        /* Muka surat baru untuk gambar */
-        .photo-page { page-break-before: always; text-align: center; padding-top: 10mm; }
-        .photo-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 20px; }
-        .img-wrapper { width: 45%; border: 1px solid #000; padding: 5px; background: #fff; }
+        /* Halaman Gambar */
+        .photo-page { page-break-before: always; text-align: center; padding-top: 5mm; }
+        .photo-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 15px; }
+        .img-wrapper { width: 45%; border: 1px solid #000; padding: 5px; background: #fff; box-sizing: border-box; }
         .img-wrapper img { width: 100%; height: 200px; object-fit: contain; }
     </style>
 </head>
@@ -71,7 +73,7 @@
 
 <div class="container">
     <div class="form-area">
-        <h3 style="margin-top:0; color:#2c3e50;">Maklumat Laporan</h3>
+        <h3 style="margin:0 0 10px 0; color:#2c3e50;">Maklumat Laporan</h3>
         
         <label>Tarikh</label>
         <input type="text" id="tarikh" placeholder="12 Januari 2026">
@@ -82,7 +84,7 @@
         <label>Masa Mula</label>
         <input type="text" id="masa" placeholder="0940">
 
-        <label>Senarai Staf Hadir (Pilihan Berbilang)</label>
+        <label>Senarai Staf Hadir <span class="hint">(Klik untuk pilih banyak)</span></label>
         <select id="staf" multiple size="10"></select>
         <div class="btn-group">
             <button type="button" class="btn-blue" onclick="selectAllStaf()">Pilih Semua</button>
@@ -96,24 +98,24 @@
         <input type="text" id="pengacara" placeholder="Nama Murid / Guru">
 
         <label>Ucapan Guru Besar</label>
-        <textarea id="gb" placeholder="Ringkasan ucapan..."></textarea>
+        <textarea id="gb" placeholder="Masukkan ringkasan ucapan..."></textarea>
         
         <label>Ucapan GPK Pentadbiran</label>
-        <textarea id="gpk_admin" placeholder="Ringkasan ucapan..."></textarea>
+        <textarea id="gpk_admin" placeholder="Masukkan ringkasan ucapan..."></textarea>
         
         <label>Ucapan GPK HEM</label>
-        <textarea id="gpk_hem" placeholder="Ringkasan ucapan..."></textarea>
+        <textarea id="gpk_hem" placeholder="Masukkan ringkasan ucapan..."></textarea>
         
         <label>Ucapan GPK Kokurikulum</label>
-        <textarea id="gpk_koku" placeholder="Ringkasan ucapan..."></textarea>
+        <textarea id="gpk_koku" placeholder="Masukkan ringkasan ucapan..."></textarea>
         
         <label>Ucapan Staf Lain</label>
-        <textarea id="staf_lain" placeholder="Ringkasan ucapan..."></textarea>
+        <textarea id="staf_lain" placeholder="Masukkan ringkasan ucapan..."></textarea>
 
         <label>Disediakan Oleh</label>
         <input type="text" id="disediakan" placeholder="Nama penyedia laporan">
         
-        <label>Gambar Perhimpunan</label>
+        <label>Muat Naik Gambar</label>
         <input type="file" id="inputPhotos" accept="image/*" multiple>
 
         <button class="btn-green" onclick="generatePDF()">JANA & MUAT TURUN PDF</button>
@@ -143,9 +145,9 @@
             </table>
 
             <div id="photo-area" class="photo-page">
-                <h3 style="text-decoration: underline;">LAMPIRAN GAMBAR</h3>
+                <h3 style="text-decoration: underline; font-size: 16px;">LAMPIRAN GAMBAR</h3>
                 <div id="pvPhotos" class="photo-grid">
-                    <p style="color: #ccc; font-style: italic;">Gambar akan dipaparkan di sini.</p>
+                    <p style="color: #ccc; font-style: italic;">Gambar akan muncul di sini selepas dimuat naik.</p>
                 </div>
             </div>
         </div>
