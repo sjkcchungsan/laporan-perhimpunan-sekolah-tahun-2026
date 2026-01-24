@@ -25,10 +25,10 @@
         .btn-blue { background-color: #3498db; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; flex: 1; font-weight: bold; }
         .btn-green { background-color: #27ae60; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; cursor: pointer; font-size: 1.1rem; font-weight: bold; margin-top: 25px; }
 
-        /* KAWASAN PREVIEW */
+        /* KAWASAN PREVIEW (Hanya untuk paparan di skrin) */
         .preview-area { background: #555; padding: 10px; overflow-x: auto; display: flex; justify-content: center; }
 
-        /* KAWASAN LAPORAN (SAIZ TETAP A4) */
+        /* KAWASAN LAPORAN (SAIZ TETAP A4 - PENTING UNTUK TELEFON) */
         #pdf-content { 
             background: white; 
             width: 210mm; 
@@ -36,9 +36,10 @@
             padding: 10mm 15mm; 
             box-sizing: border-box; 
             margin: 0;
-            flex-shrink: 0;
+            flex-shrink: 0; /* Elakkan ia mengecil di telefon */
         }
 
+        /* Kandungan PDF */
         .logo-box { text-align: center; margin: 0 0 5px 0; }
         .logo-box img { max-width: 100px; height: auto; }
         h2 { text-align: center; text-decoration: underline; font-size: 18px; margin: 0 0 15px 0; text-transform: uppercase; }
@@ -110,8 +111,9 @@
 </div>
 
 <script>
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbygP7CgF8KaOohU5Zf4GjobXB3Kcuj8O0ykpWwstgwOkBfsjJto0RQs6EIVLerqocsxOQ/exec';
-    
+    // WEB APP URL BAHARU
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxYWDeP4n0HZ3JQ8q702tXSv0pU9m5TplVaWiVBopO7api_KB5qouP478O5m7zgiOHvGg/exec';
+
     const stafList = ["Ling Lee Ann","Kong Zhe Fong","Fong Cui Fung","Cynthia Ting Xing Rou","Florence Wong Zhi Yu","Goh Su Ching","Lau Yun Hee","Roland Ting Hock Sing","Sharmaine Daphne Anak Slyvester Bakar","Stephen Hii Yii Nan","Tu Hiong Hiong","Unice Wong Wen Wen","Zafrullah Bin Mohd Sabri","Wong Chui Ling","Claudia Mo Ong Yi","Evy Law Jia Jia","Yuki Ng Jiajing","Wee Chun Yang","Efira Nazation Anak Kennedy","Faizah Binti Othman","Mariani Binti Haili","Stacy Wan"];
     const select = document.getElementById('staf');
     stafList.sort().forEach(s => select.add(new Option(s, s)));
@@ -157,7 +159,7 @@
         const btn = document.getElementById('btnJana');
         const tarikhVal = document.getElementById('tarikh').value || 'Baru';
         const fileName = `Laporan_Perhimpunan_${tarikhVal.replace(/\s+/g, '_')}.pdf`;
-        
+
         btn.innerText = "Menjana & Menyimpan...";
         btn.disabled = true;
         
@@ -170,8 +172,8 @@
             html2canvas: { 
                 scale: 2, 
                 useCORS: true, 
-                width: 794,
-                windowWidth: 794,
+                width: 794, 
+                windowWidth: 794, 
                 scrollY: 0,
                 scrollX: 0
             },
@@ -179,30 +181,30 @@
         };
 
         try {
-            // 1. Jana PDF Worker
+            // 1. Jana PDF sebagai Data URL string
             const worker = html2pdf().set(opt).from(element);
-            
-            // 2. Dapatkan Base64 untuk Google Drive
             const pdfBase64 = await worker.outputPdf('datauristring');
             
-            // 3. Simpan ke Google Drive melalui Web App
-            const driveResponse = await fetch(WEB_APP_URL, {
+            // 2. Muat turun fail secara lokal
+            await worker.save();
+
+            // 3. Hantar ke Google Drive (Web App)
+            // Menggunakan method fetch POST
+            await fetch(WEB_APP_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Penting untuk mengelakkan isu CORS pada sesetengah browser
+                mode: 'no-cors', // Digunakan untuk bypass isu CORS pada Google Apps Script
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     pdf: pdfBase64,
                     filename: fileName
                 })
             });
 
-            // 4. Muat turun ke komputer/telefon seperti biasa
-            await worker.save();
-
-            alert("Selesai! Fail telah dimuat turun dan sedang dihantar ke Google Drive.");
+            alert("Berjaya! Fail telah dimuat turun dan dihantar ke Google Drive.");
 
         } catch (error) {
             console.error(error);
-            alert("Ralat teknikal berlaku. Sila cuba lagi.");
+            alert("Ralat berlaku semasa proses simpanan.");
         } finally {
             btn.innerText = "MUAT TURUN & SIMPAN KE DRIVE";
             btn.disabled = false;
