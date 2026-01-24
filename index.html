@@ -59,8 +59,8 @@
 <div class="container">
     <div class="form-area">
         <h3 style="margin:0; color:#2c3e50;">Input Laporan</h3>
-        <label>Tarikh</label><input type="text" id="tarikh" placeholder="12 Januari 2026">
-        <label>Hari</label><input type="text" id="hari" placeholder="Isnin">
+        <label>Tarikh</label><input type="date" id="tarikh">
+        <label>Hari</label><input type="text" id="hari" placeholder="Auto-isi selepas pilih tarikh">
         <label>Masa Mula</label><input type="text" id="masa" placeholder="0940">
 
         <label>Senarai Staf (Multi-select)</label>
@@ -85,7 +85,12 @@
         <label>Ucapan GPK HEM</label><textarea id="gpk_hem" placeholder="..."></textarea>
         <label>Ucapan GPK Kokurikulum</label><textarea id="gpk_koku" placeholder="..."></textarea>
         <label>Ucapan Staf Lain</label><textarea id="staf_lain" placeholder="..."></textarea>
-        <label>Disediakan Oleh</label><input type="text" id="disediakan" placeholder="Nama penyedia">
+        
+        <label>Disediakan Oleh</label>
+        <select id="disediakan">
+            <option value="">-- Pilih Nama --</option>
+        </select>
+
         <label>Muat Naik Gambar</label><input type="file" id="inputPhotos" accept="image/*" multiple>
 
         <button id="btnJana" class="btn-green" onclick="generatePDF()">MUAT TURUN PDF</button>
@@ -120,15 +125,41 @@
 
 <script>
     const stafList = ["Ling Lee Ann","Kong Zhe Fong","Fong Cui Fung","Cynthia Ting Xing Rou","Florence Wong Zhi Yu","Goh Su Ching","Lau Yun Hee","Roland Ting Hock Sing","Sharmaine Daphne Anak Slyvester Bakar","Stephen Hii Yii Nan","Tu Hiong Hiong","Unice Wong Wen Wen","Zafrullah Bin Mohd Sabri","Wong Chui Ling","Claudia Mo Ong Yi","Evy Law Jia Jia","Yuki Ng Jiajing","Wee Chun Yang","Efira Nazation Anak Kennedy","Faizah Binti Othman","Mariani Binti Haili","Stacy Wan"];
-    const select = document.getElementById('staf');
-    stafList.sort().forEach(s => select.add(new Option(s, s)));
+    
+    const selectStaf = document.getElementById('staf');
+    const selectDisediakan = document.getElementById('disediakan');
+    const inputTarikh = document.getElementById('tarikh');
+    const inputHari = document.getElementById('hari');
 
-    function selectAllStaf() { Array.from(select.options).forEach(o => o.selected = true); updatePreview(); }
-    function clearStaf() { Array.from(select.options).forEach(o => o.selected = false); updatePreview(); }
+    // Isi dropdown staf dan disediakan oleh
+    stafList.sort().forEach(s => {
+        selectStaf.add(new Option(s, s));
+        selectDisediakan.add(new Option(s, s));
+    });
+
+    function selectAllStaf() { Array.from(selectStaf.options).forEach(o => o.selected = true); updatePreview(); }
+    function clearStaf() { Array.from(selectStaf.options).forEach(o => o.selected = false); updatePreview(); }
+
+    // Fungsi format tarikh & auto-hari
+    inputTarikh.addEventListener('change', function() {
+        if (this.value) {
+            const tarikhObj = new Date(this.value);
+            const hariList = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
+            inputHari.value = hariList[tarikhObj.getDay()];
+        }
+        updatePreview();
+    });
+
+    function formatTarikhMelayu(dateVal) {
+        if (!dateVal) return '-';
+        const tarikhObj = new Date(dateVal);
+        const bulan = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
+        return `${tarikhObj.getDate()} ${bulan[tarikhObj.getMonth()]} ${tarikhObj.getFullYear()}`;
+    }
 
     function updatePreview() {
-        document.getElementById('pvTarikh').innerText = document.getElementById('tarikh').value || '-';
-        document.getElementById('pvHari').innerText = document.getElementById('hari').value || '-';
+        document.getElementById('pvTarikh').innerText = formatTarikhMelayu(inputTarikh.value);
+        document.getElementById('pvHari').innerText = inputHari.value || '-';
         document.getElementById('pvMasa').innerText = document.getElementById('masa').value || '-';
         document.getElementById('pvTema').innerText = document.getElementById('tema').value || '-';
         document.getElementById('pvPengacara').innerText = document.getElementById('pengacara').value || '-';
@@ -138,7 +169,8 @@
         document.getElementById('pvGPKKoku').innerText = document.getElementById('gpk_koku').value || '-';
         document.getElementById('pvStafLain').innerText = document.getElementById('staf_lain').value || '-';
         document.getElementById('pvDisediakan').innerText = document.getElementById('disediakan').value || '-';
-        const sel = Array.from(select.selectedOptions).map(o => o.value);
+        
+        const sel = Array.from(selectStaf.selectedOptions).map(o => o.value);
         document.getElementById('pvStaf').innerText = sel.length ? sel.join(", ") : "-";
     }
 
@@ -166,7 +198,7 @@
         btn.disabled = true;
         
         const element = document.getElementById('pdf-content');
-        const fileName = `Laporan Perhimpunan Sekolah ${document.getElementById('tarikh').value || 'Baru'}.pdf`;
+        const fileName = `Laporan Perhimpunan Minggu - ${document.getElementById('pvTarikh').innerText}.pdf`;
 
         const opt = {
             margin: 0,
