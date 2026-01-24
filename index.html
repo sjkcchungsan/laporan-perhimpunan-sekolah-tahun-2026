@@ -6,47 +6,27 @@
     <title>Sistem Laporan SJKC Chung San</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        /* Gaya umum untuk skrin */
         body { font-family: Arial, sans-serif; background-color: #f0f2f5; margin: 0; padding: 10px; }
         .container { display: flex; flex-direction: column; gap: 20px; }
-        
         @media (min-width: 992px) {
             .container { flex-direction: row; align-items: flex-start; }
             .form-area { width: 35%; position: sticky; top: 10px; max-height: 95vh; overflow-y: auto; }
             .preview-area { width: 65%; }
         }
-
         .form-area { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         label { font-weight: bold; display: block; margin-top: 15px; font-size: 0.9rem; }
         input, textarea, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
-        ::placeholder { color: #a9a9a9; }
-
         .btn-group { display: flex; gap: 10px; margin-top: 10px; }
         .btn-blue { background-color: #3498db; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; flex: 1; font-weight: bold; }
         .btn-green { background-color: #27ae60; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; cursor: pointer; font-size: 1.1rem; font-weight: bold; margin-top: 25px; }
-
-        /* KAWASAN PREVIEW */
         .preview-area { background: #555; padding: 10px; overflow-x: auto; display: flex; justify-content: center; }
-
-        /* KAWASAN LAPORAN (SAIZ TETAP A4) */
-        #pdf-content { 
-            background: white; 
-            width: 210mm; 
-            min-height: 297mm; 
-            padding: 10mm 15mm; 
-            box-sizing: border-box; 
-            margin: 0;
-            flex-shrink: 0;
-        }
-
+        #pdf-content { background: white; width: 210mm; min-height: 297mm; padding: 10mm 15mm; box-sizing: border-box; margin: 0; flex-shrink: 0; }
         .logo-box { text-align: center; margin: 0 0 5px 0; }
         .logo-box img { max-width: 100px; height: auto; }
         h2 { text-align: center; text-decoration: underline; font-size: 18px; margin: 0 0 15px 0; text-transform: uppercase; }
-        
         table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 1px solid black; }
         th, td { border: 1px solid black; padding: 8px; font-size: 13px; word-wrap: break-word; vertical-align: top; }
         th { background-color: #f2f2f2; width: 35%; text-align: left; }
-
         .photo-page { page-break-before: always; text-align: center; padding-top: 10mm; }
         .photo-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 15px; }
         .img-wrapper { width: 45%; border: 1px solid #000; padding: 5px; background: #fff; box-sizing: border-box; }
@@ -61,24 +41,21 @@
         <label>Tarikh</label><input type="text" id="tarikh" placeholder="12 Januari 2026">
         <label>Hari</label><input type="text" id="hari" placeholder="Isnin">
         <label>Masa Mula</label><input type="text" id="masa" placeholder="0940">
-
         <label>Senarai Staf (Multi-select)</label>
         <select id="staf" multiple size="8"></select>
         <div class="btn-group">
             <button type="button" class="btn-blue" onclick="selectAllStaf()">Pilih Semua</button>
             <button type="button" class="btn-blue" style="background-color:#95a5a6" onclick="clearStaf()">Reset</button>
         </div>
-
-        <label>Tema Sivik</label><input type="text" id="tema" placeholder="Kasih Sayang/ Bertanggungjawab/ Kegembiraan/ Hormat-Menghormati">
-        <label>Nama Pengacara</label><input type="text" id="pengacara" placeholder="Nama Murid / Guru">
-        <label>Ucapan Guru Besar</label><textarea id="gb" placeholder="..."></textarea>
-        <label>Ucapan GPK Pentadbiran</label><textarea id="gpk_admin" placeholder="..."></textarea>
-        <label>Ucapan GPK HEM</label><textarea id="gpk_hem" placeholder="..."></textarea>
-        <label>Ucapan GPK Kokurikulum</label><textarea id="gpk_koku" placeholder="..."></textarea>
-        <label>Ucapan Staf Lain</label><textarea id="staf_lain" placeholder="..."></textarea>
-        <label>Disediakan Oleh</label><input type="text" id="disediakan" placeholder="Nama penyedia">
+        <label>Tema Sivik</label><input type="text" id="tema">
+        <label>Nama Pengacara</label><input type="text" id="pengacara">
+        <label>Ucapan Guru Besar</label><textarea id="gb"></textarea>
+        <label>Ucapan GPK Pentadbiran</label><textarea id="gpk_admin"></textarea>
+        <label>Ucapan GPK HEM</label><textarea id="gpk_hem"></textarea>
+        <label>Ucapan GPK Kokurikulum</label><textarea id="gpk_koku"></textarea>
+        <label>Ucapan Staf Lain</label><textarea id="staf_lain"></textarea>
+        <label>Disediakan Oleh</label><input type="text" id="disediakan">
         <label>Muat Naik Gambar</label><input type="file" id="inputPhotos" accept="image/*" multiple>
-
         <button id="btnJana" class="btn-green" onclick="generatePDF()">MUAT TURUN & SIMPAN KE DRIVE</button>
     </div>
 
@@ -110,7 +87,8 @@
 </div>
 
 <script>
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxYWDeP4n0HZ3JQ8q702tXSv0pU9m5TplVaWiVBopO7api_KB5qouP478O5m7zgiOHvGg/exec';
+    // MASUKKAN URL BARU ANDA DI SINI
+    const WEB_APP_URL = 'MASUKKAN_URL_BARU_DI_SINI';
 
     const stafList = ["Ling Lee Ann","Kong Zhe Fong","Fong Cui Fung","Cynthia Ting Xing Rou","Florence Wong Zhi Yu","Goh Su Ching","Lau Yun Hee","Roland Ting Hock Sing","Sharmaine Daphne Anak Slyvester Bakar","Stephen Hii Yii Nan","Tu Hiong Hiong","Unice Wong Wen Wen","Zafrullah Bin Mohd Sabri","Wong Chui Ling","Claudia Mo Ong Yi","Evy Law Jia Jia","Yuki Ng Jiajing","Wee Chun Yang","Efira Nazation Anak Kennedy","Faizah Binti Othman","Mariani Binti Haili","Stacy Wan"];
     const select = document.getElementById('staf');
@@ -120,34 +98,49 @@
     function clearStaf() { Array.from(select.options).forEach(o => o.selected = false); updatePreview(); }
 
     function updatePreview() {
-        document.getElementById('pvTarikh').innerText = document.getElementById('tarikh').value || '-';
-        document.getElementById('pvHari').innerText = document.getElementById('hari').value || '-';
-        document.getElementById('pvMasa').innerText = document.getElementById('masa').value || '-';
-        document.getElementById('pvTema').innerText = document.getElementById('tema').value || '-';
-        document.getElementById('pvPengacara').innerText = document.getElementById('pengacara').value || '-';
-        document.getElementById('pvGB').innerText = document.getElementById('gb').value || '-';
-        document.getElementById('pvGPKAdmin').innerText = document.getElementById('gpk_admin').value || '-';
-        document.getElementById('pvGPKHEM').innerText = document.getElementById('gpk_hem').value || '-';
-        document.getElementById('pvGPKKoku').innerText = document.getElementById('gpk_koku').value || '-';
-        document.getElementById('pvStafLain').innerText = document.getElementById('staf_lain').value || '-';
-        document.getElementById('pvDisediakan').innerText = document.getElementById('disediakan').value || '-';
+        const fields = ['tarikh','hari','masa','tema','pengacara','gb','gpk_admin','gpk_hem','gpk_koku','staf_lain','disediakan'];
+        fields.forEach(id => {
+            const target = 'pv' + id.charAt(0).toUpperCase() + id.slice(1).replace('_','');
+            const el = document.getElementById(target);
+            if(el) el.innerText = document.getElementById(id).value || '-';
+        });
         const sel = Array.from(select.selectedOptions).map(o => o.value);
         document.getElementById('pvStaf').innerText = sel.length ? sel.join(", ") : "-";
     }
 
     document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', updatePreview));
 
+    // FUNGSI RESIZE GAMBAR (PENTING UNTUK TELEFON)
+    async function processImage(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const max_size = 800; 
+                    if (width > height) { if (width > max_size) { height *= max_size / width; width = max_size; } }
+                    else { if (height > max_size) { width *= max_size / height; height = max_size; } }
+                    canvas.width = width; canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.7)); 
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
     document.getElementById('inputPhotos').addEventListener('change', async function(e) {
         const container = document.getElementById('pvPhotos');
-        container.innerHTML = 'Memproses...';
+        container.innerHTML = 'Memproses Gambar...';
         const files = Array.from(e.target.files);
         let html = '';
         for (let i = 0; i < files.length; i++) {
-            const dataUrl = await new Promise(r => {
-                const fr = new FileReader();
-                fr.onload = (ev) => r(ev.target.result);
-                fr.readAsDataURL(files[i]);
-            });
+            const dataUrl = await processImage(files[i]);
             html += `<div class="img-wrapper"><img src="${dataUrl}"><p style="font-size:11px; margin:5px 0;">Gambar ${i+1}</p></div>`;
         }
         container.innerHTML = html;
@@ -155,54 +148,35 @@
 
     async function generatePDF() {
         const btn = document.getElementById('btnJana');
-        const tarikhVal = document.getElementById('tarikh').value || 'Baru';
-        const fileName = `Laporan_Perhimpunan_${tarikhVal.replace(/\s+/g, '_')}.pdf`;
-
-        btn.innerText = "Sila Tunggu (Sedang Upload)...";
+        const fileName = `Laporan_${document.getElementById('tarikh').value || 'Baru'}.pdf`;
+        btn.innerText = "Menjana & Menghantar...";
         btn.disabled = true;
-        
-        const element = document.getElementById('pdf-content');
-
-        const opt = {
-            margin: 0,
-            filename: fileName,
-            image: { type: 'jpeg', quality: 0.90 },
-            html2canvas: { 
-                scale: 1.5, 
-                useCORS: true, 
-                width: 794, 
-                windowWidth: 794,
-                scrollY: 0,
-                scrollX: 0
-            },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
 
         try {
-            const worker = html2pdf().set(opt).from(element);
-            
-            // Jana Base64 string
-            const pdfBase64 = await worker.outputPdf('datauristring');
-            
-            // Simpan lokal (Muat turun)
-            await worker.save();
+            const element = document.getElementById('pdf-content');
+            const opt = {
+                margin: 0, filename: fileName, image: { type: 'jpeg', quality: 0.8 },
+                html2canvas: { scale: 1.5, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
 
-            // Hantar ke Google Drive (Gunakan format string terus untuk kestabilan mobile)
+            const pdfWorker = html2pdf().set(opt).from(element);
+            const pdfBase64 = await pdfWorker.outputPdf('datauristring');
+            
+            // Muat turun lokal
+            await pdfWorker.save();
+
+            // Hantar ke Drive
             await fetch(WEB_APP_URL, {
                 method: 'POST',
                 mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({
-                    pdf: pdfBase64,
-                    filename: fileName
-                })
+                body: JSON.stringify({ pdf: pdfBase64, filename: fileName })
             });
 
-            alert("Selesai! Fail telah dimuat turun dan dihantar ke Drive.");
+            alert("BERJAYA!\n1. Fail dimuat turun.\n2. Fail dihantar ke Google Drive.");
 
         } catch (error) {
-            console.error(error);
-            alert("Ralat berlaku. Sila pastikan saiz gambar tidak terlalu besar.");
+            alert("Ralat: " + error);
         } finally {
             btn.innerText = "MUAT TURUN & SIMPAN KE DRIVE";
             btn.disabled = false;
